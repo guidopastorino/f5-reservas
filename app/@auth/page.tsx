@@ -2,8 +2,6 @@
 
 import { signIn, useSession } from "next-auth/react";
 import { useState } from "react";
-import Link from "next/link";
-import axios from "axios";
 
 export default function page() {
   const [tab, setTab] = useState<number>(1)
@@ -21,7 +19,7 @@ export default function page() {
   )
 }
 
-export function SignInPage() {
+function SignInPage() {
   const [usernameOrEmail, setUsernameOrEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -72,7 +70,7 @@ export function SignInPage() {
   );
 }
 
-export function RegisterPage() {
+function RegisterPage() {
   const [fullname, setFullname] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");

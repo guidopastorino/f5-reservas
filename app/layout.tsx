@@ -11,16 +11,16 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-  signin
+  auth
 }: Readonly<{
   children: React.ReactNode;
-  signin: React.ReactNode;
+  auth: React.ReactNode;
 }>) {
   return (
     <html lang="en">
       <body>
         <App>
-          <AuthLayout signin={signin}>
+          <AuthLayout auth={auth}>
             <>
               <Navbar />
               <div className="w-full max-w-screen-2xl p-5 mx-auto">

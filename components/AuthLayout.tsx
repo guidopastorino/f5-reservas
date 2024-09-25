@@ -6,10 +6,10 @@ import ScreenLoader from '@/components/ScreenLoader';
 
 const AuthLayout = ({
   children,
-  signin
+  auth
 }: Readonly<{
   children: React.ReactNode;
-  signin: React.ReactNode;
+  auth: React.ReactNode;
 }>) => {
   const { status } = useSession()
 
@@ -27,7 +27,7 @@ const AuthLayout = ({
             }</>
           )
           : (
-            <>{signin}</>
+            <>{auth}</>
           )
       }
     </>
