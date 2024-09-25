@@ -74,7 +74,7 @@ type FormInputProps = {
   readOnly?: boolean;
 };
 
-export const FormInput: React.FC<FormInputProps> = ({ value, type, placeholder, name, readOnly }) => {
+const FormInput: React.FC<FormInputProps> = ({ value, type, placeholder, name, readOnly }) => {
   return (
     <input className='p-3 border border-black w-full' value={value} type={type} placeholder={placeholder} name={name} readOnly={readOnly} />
   );
