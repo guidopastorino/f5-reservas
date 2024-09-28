@@ -1,6 +1,9 @@
 'use client'
+import { useShowMessage } from '@/hooks/useShowMessage';
 import useUser from '@/hooks/useUser'
-import React from 'react'
+import axios from 'axios';
+import { signOut, useSession } from 'next-auth/react';
+import React, { useEffect, useState } from 'react'
 
 const Page = () => {
   const user = useUser();
@@ -23,6 +26,33 @@ const Page = () => {
     .split(' ')
     .map(name => name.charAt(0).toUpperCase())
     .join('');
+
+
+  // Función para eliminar el usuario
+  const { data: session } = useSession()
+
+  const { message, visible, showMessage } = useShowMessage()
+
+  const [loading, setLoading] = useState<boolean>(false)
+
+  const deleteUser = async () => {
+    try {
+      setLoading(true)
+      const res = await axios.delete(`/api/users/${session?.user.id || ''}`);
+
+      if (res.status === 200) {
+        showMessage(res.data.message);
+        setTimeout(() => {
+          signOut({ callbackUrl: '/' });
+        }, 1000);
+      } else {
+        showMessage(`Error eliminando usuario: ${res.data.error}`);
+      }
+    } catch (error) {
+      showMessage(`Error eliminando usuario: ${error}`);
+    }
+    setLoading(false)
+  };
 
   return (
     <div className="w-full border max-w-screen-lg mx-auto p-4">
@@ -57,6 +87,16 @@ const Page = () => {
       <div className="mt-2">
         <span className="font-bold">Role:</span> {user.role}
       </div>
+
+      <button
+        onClick={deleteUser}
+        disabled={loading}
+        className="w-full max-w-max mx-auto font-medium my-5 rounded-full bg-red-900 text-white py-3 px-5 text-sm hover:bg-red-700 duration-100 flex justify-center items-center"
+      >
+        {loading ? <span className="buttonLoader"></span> : "Eliminar cuenta"}
+      </button>
+
+      {visible && <span>{message}</span>}
     </div>
   );
 }
