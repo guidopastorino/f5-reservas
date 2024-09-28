@@ -1,29 +1,25 @@
 "use client";
 
+import Modal from "@/components/Modal";
+import { useShowMessage } from "@/hooks/useShowMessage";
 import { signIn, useSession } from "next-auth/react";
 import { useState } from "react";
 
 export default function page() {
-  const [tab, setTab] = useState<number>(1)
-
   return (
-    <>
-      <div>
-        <div onClick={() => setTab(1)}>Sign In</div>
-        <div onClick={() => setTab(2)}>Register</div>
-      </div>
-      {/* render tabs */}
-      {(tab == 1) && <SignInPage />}
-      {(tab == 2) && <RegisterPage />}
-    </>
+    <SignInPage />
   )
 }
 
 function SignInPage() {
   const [usernameOrEmail, setUsernameOrEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState<boolean>(false)
+
+  const { message, visible, showMessage } = useShowMessage();
 
   const handleSubmit = async (e: React.FormEvent) => {
+    setLoading(true)
     e.preventDefault();
     const result = await signIn("credentials", {
       redirect: false,
@@ -33,18 +29,19 @@ function SignInPage() {
     });
 
     if (result?.error) {
-      alert(`Error en inicio de sesión: ${result?.error}`);
+      showMessage(result?.error);
     } else {
       // signed in successfully
       if (typeof window != undefined) window.location.href = result?.url || "/"
     }
+    setLoading(false)
   };
 
   return (
-    <div>
-      <h1>Iniciar sesión</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
+    <div className="shadow-lg mx-auto w-full max-w-80 flex flex-col justify-center items-center gap-5 p-3 rounded-lg m-10">
+      <span className="font-bold text-2xl">Iniciar sesión</span>
+      <form onSubmit={handleSubmit} className="w-full">
+        <div className="flex flex-col gap-1">
           <label htmlFor="usernameOrEmail">Usuario o Email</label>
           <input
             type="text"
@@ -52,9 +49,10 @@ function SignInPage() {
             value={usernameOrEmail}
             onChange={(e) => setUsernameOrEmail(e.target.value)}
             required
+            className="border"
           />
         </div>
-        <div>
+        <div className="flex flex-col gap-1">
           <label htmlFor="password">Contraseña</label>
           <input
             type="password"
@@ -62,10 +60,18 @@ function SignInPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            className="border"
           />
         </div>
-        <button type="submit">Iniciar sesión</button>
+        <button disabled={loading} type="submit" className="w-full mx-auto font-medium my-5 rounded-full bg-neutral-900 text-white py-3 px-5 text-sm hover:bg-neutral-700 duration-100 flex justify-center items-center">
+          {loading ? <span className="buttonLoader"></span> : "Iniciar sesión"}
+        </button>
       </form>
+      {visible && <span>{message}</span>}
+      {/*  */}
+      <Modal buttonTrigger={<button className="w-full mx-auto font-medium my-5 rounded-full bg-green-900 text-white py-3 px-5 text-sm hover:bg-green-700 duration-100 flex justify-center items-center">Registrarse</button>}>
+        <RegisterPage />
+      </Modal>
     </div>
   );
 }
@@ -75,30 +81,45 @@ function RegisterPage() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const { message, visible, showMessage } = useShowMessage();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
 
-    const res = await fetch("/api/auth/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ fullname, username, email, password }),
-    });
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ fullname, username, email, password }),
+      });
 
-    if (res.ok) {
-      if (typeof window != undefined) window.location.href = "/"; // Redirige al usuario al inicio de sesión después del registro
-    } else {
-      alert("Error en el registro");
+      const data = await res.json();
+
+      if (res.ok) {
+        showMessage(data.message);
+        setTimeout(() => {
+          if (typeof window !== "undefined") window.location.href = "/";
+        }, 1000);
+      } else {
+        showMessage(data.error || "Error desconocido");
+      }
+    } catch (error) {
+      showMessage("Error al conectar con el servidor");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div>
-      <h1>Registro de Usuario</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
+    <div className="flex flex-col justify-center items-center gap-5 p-2 rounded-lg m-10">
+      <span className="font-bold text-2xl">Registrarse</span>
+      <form onSubmit={handleSubmit} className="w-full">
+        <div className="flex flex-col gap-1">
           <label htmlFor="fullname">Nombre Completo</label>
           <input
             type="text"
@@ -106,9 +127,10 @@ function RegisterPage() {
             value={fullname}
             onChange={(e) => setFullname(e.target.value)}
             required
+            className="border"
           />
         </div>
-        <div>
+        <div className="flex flex-col gap-1">
           <label htmlFor="username">Nombre de Usuario</label>
           <input
             type="text"
@@ -116,9 +138,10 @@ function RegisterPage() {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
+            className="border"
           />
         </div>
-        <div>
+        <div className="flex flex-col gap-1">
           <label htmlFor="email">Email</label>
           <input
             type="email"
@@ -126,9 +149,10 @@ function RegisterPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            className="border"
           />
         </div>
-        <div>
+        <div className="flex flex-col gap-1">
           <label htmlFor="password">Contraseña</label>
           <input
             type="password"
@@ -136,10 +160,18 @@ function RegisterPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            className="border"
           />
         </div>
-        <button type="submit">Registrarse</button>
+        <button
+          disabled={loading}
+          type="submit"
+          className="w-full mx-auto font-medium my-5 rounded-full bg-neutral-900 text-white py-3 px-5 text-sm hover:bg-neutral-700 duration-100 flex justify-center items-center"
+        >
+          {loading ? <span className="buttonLoader"></span> : "Registrarse"}
+        </button>
       </form>
+      {visible && <span>{message}</span>}
     </div>
   );
 }
