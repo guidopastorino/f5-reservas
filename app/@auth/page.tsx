@@ -4,6 +4,9 @@ import Modal from "@/components/Modal";
 import { useShowMessage } from "@/hooks/useShowMessage";
 import { signIn, useSession } from "next-auth/react";
 import { useState } from "react";
+// Form validation
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
 
 export default function page() {
   return (
@@ -11,82 +14,128 @@ export default function page() {
   )
 }
 
-function SignInPage() {
-  const [usernameOrEmail, setUsernameOrEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState<boolean>(false)
+// Sign In
+const SignInSchema = Yup.object().shape({
+  usernameOrEmail: Yup.string()
+    .required("El nombre de usuario o email es obligatorio"),
+  password: Yup.string()
+    .min(6, "La contraseña debe tener al menos 6 caracteres")  // Nueva validación
+    .required("La contraseña es obligatoria"),
+});
 
+function SignInPage() {
+  const [loading, setLoading] = useState<boolean>(false);
   const { message, visible, showMessage } = useShowMessage();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    setLoading(true)
-    e.preventDefault();
+  const handleSubmit = async (values: { usernameOrEmail: string; password: string }) => {
+    setLoading(true);
     const result = await signIn("credentials", {
       redirect: false,
-      usernameOrEmail,
-      password,
+      usernameOrEmail: values.usernameOrEmail,
+      password: values.password,
       callbackUrl: "/",
     });
 
     if (result?.error) {
       showMessage(result?.error);
     } else {
-      // signed in successfully
-      if (typeof window != undefined) window.location.href = result?.url || "/"
+      if (typeof window !== "undefined") window.location.href = result?.url || "/";
     }
-    setLoading(false)
+    setLoading(false);
   };
 
   return (
     <div className="shadow-lg mx-auto w-full max-w-80 flex flex-col justify-center items-center gap-5 p-3 rounded-lg m-10">
       <span className="font-bold text-2xl">Iniciar sesión</span>
-      <form onSubmit={handleSubmit} className="w-full">
-        <div className="flex flex-col gap-1">
-          <label htmlFor="usernameOrEmail">Usuario o Email</label>
-          <input
-            type="text"
-            id="usernameOrEmail"
-            value={usernameOrEmail}
-            onChange={(e) => setUsernameOrEmail(e.target.value)}
-            required
-            className="border"
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          <label htmlFor="password">Contraseña</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className="border"
-          />
-        </div>
-        <button disabled={loading} type="submit" className="w-full mx-auto font-medium my-5 rounded-full bg-neutral-900 text-white py-3 px-5 text-sm hover:bg-neutral-700 duration-100 flex justify-center items-center">
-          {loading ? <span className="buttonLoader"></span> : "Iniciar sesión"}
-        </button>
-      </form>
-      {visible && <span>{message}</span>}
-      {/*  */}
-      <Modal buttonTrigger={<button className="w-full mx-auto font-medium my-5 rounded-full bg-green-900 text-white py-3 px-5 text-sm hover:bg-green-700 duration-100 flex justify-center items-center">Registrarse</button>}>
+
+      <Formik
+        initialValues={{
+          usernameOrEmail: "",
+          password: "",
+        }}
+        validationSchema={SignInSchema} // Aplicamos la validación con Yup
+        onSubmit={handleSubmit} // Se maneja el submit con Formik
+      >
+        {({ isSubmitting }) => (
+          <Form className="w-full">
+            <div className="flex flex-col gap-1">
+              <label htmlFor="usernameOrEmail">Usuario o Email</label>
+              <Field
+                type="text"
+                id="usernameOrEmail"
+                name="usernameOrEmail"
+                className="border"
+              />
+              <ErrorMessage
+                name="usernameOrEmail"
+                component="div"
+                className="text-red-600"
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label htmlFor="password">Contraseña</label>
+              <Field
+                type="password"
+                id="password"
+                name="password"
+                className="border"
+              />
+              <ErrorMessage
+                name="password"
+                component="div"
+                className="text-red-600"
+              />
+            </div>
+            <button
+              disabled={loading || isSubmitting}
+              type="submit"
+              className="w-full mx-auto font-medium my-5 rounded-full bg-neutral-900 text-white py-3 px-5 text-sm hover:bg-neutral-700 duration-100 flex justify-center items-center"
+            >
+              {loading ? <span className="buttonLoader"></span> : "Iniciar sesión"}
+            </button>
+          </Form>
+        )}
+      </Formik>
+
+      {visible && <span className="text-red-600">{message}</span>}
+
+      {/* Modal para registro */}
+      <Modal
+        buttonTrigger={
+          <button className="w-full mx-auto font-medium my-5 rounded-full bg-green-900 text-white py-3 px-5 text-sm hover:bg-green-700 duration-100 flex justify-center items-center">
+            Registrarse
+          </button>
+        }
+      >
         <RegisterPage />
       </Modal>
     </div>
   );
 }
 
-function RegisterPage() {
-  const [fullname, setFullname] = useState("");
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState<boolean>(false);
 
+// Register
+const RegisterSchema = Yup.object().shape({
+  fullname: Yup.string()
+    .required("El nombre completo es obligatorio"),
+  username: Yup.string()
+    .min(3, "El nombre de usuario debe tener al menos 3 caracteres")
+    .required("El nombre de usuario es obligatorio"),
+  email: Yup.string()
+    .email("El email no es válido")
+    .required("El email es obligatorio"),
+  password: Yup.string()
+    .min(6, "La contraseña debe tener al menos 6 caracteres")
+    .matches(/[A-Z]/, "La contraseña debe tener al menos una letra mayúscula")
+    .matches(/\d/, "La contraseña debe tener al menos un número")
+    .required("La contraseña es obligatoria"),
+});
+
+function RegisterPage() {
+  const [loading, setLoading] = useState<boolean>(false);
   const { message, visible, showMessage } = useShowMessage();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (values: { fullname: string; username: string; email: string; password: string }) => {
     setLoading(true);
 
     try {
@@ -95,7 +144,7 @@ function RegisterPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ fullname, username, email, password }),
+        body: JSON.stringify(values),
       });
 
       const data = await res.json();
@@ -118,60 +167,87 @@ function RegisterPage() {
   return (
     <div className="flex flex-col justify-center items-center gap-5 p-2 rounded-lg m-10">
       <span className="font-bold text-2xl">Registrarse</span>
-      <form onSubmit={handleSubmit} className="w-full">
-        <div className="flex flex-col gap-1">
-          <label htmlFor="fullname">Nombre Completo</label>
-          <input
-            type="text"
-            id="fullname"
-            value={fullname}
-            onChange={(e) => setFullname(e.target.value)}
-            required
-            className="border"
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          <label htmlFor="username">Nombre de Usuario</label>
-          <input
-            type="text"
-            id="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-            className="border"
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          <label htmlFor="email">Email</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="border"
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          <label htmlFor="password">Contraseña</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className="border"
-          />
-        </div>
-        <button
-          disabled={loading}
-          type="submit"
-          className="w-full mx-auto font-medium my-5 rounded-full bg-neutral-900 text-white py-3 px-5 text-sm hover:bg-neutral-700 duration-100 flex justify-center items-center"
-        >
-          {loading ? <span className="buttonLoader"></span> : "Registrarse"}
-        </button>
-      </form>
-      {visible && <span>{message}</span>}
+
+      <Formik
+        initialValues={{
+          fullname: "",
+          username: "",
+          email: "",
+          password: "",
+        }}
+        validationSchema={RegisterSchema}
+        onSubmit={handleSubmit}
+      >
+        {({ isSubmitting }) => (
+          <Form className="w-full">
+            <div className="flex flex-col gap-1">
+              <label htmlFor="fullname">Nombre Completo</label>
+              <Field
+                type="text"
+                id="fullname"
+                name="fullname"
+                className="border"
+              />
+              <ErrorMessage
+                name="fullname"
+                component="div"
+                className="text-red-600"
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label htmlFor="username">Nombre de Usuario</label>
+              <Field
+                type="text"
+                id="username"
+                name="username"
+                className="border"
+              />
+              <ErrorMessage
+                name="username"
+                component="div"
+                className="text-red-600"
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label htmlFor="email">Email</label>
+              <Field
+                type="email"
+                id="email"
+                name="email"
+                className="border"
+              />
+              <ErrorMessage
+                name="email"
+                component="div"
+                className="text-red-600"
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label htmlFor="password">Contraseña</label>
+              <Field
+                type="password"
+                id="password"
+                name="password"
+                className="border"
+              />
+              <ErrorMessage
+                name="password"
+                component="div"
+                className="text-red-600"
+              />
+            </div>
+            <button
+              disabled={loading || isSubmitting}
+              type="submit"
+              className="w-full mx-auto font-medium my-5 rounded-full bg-neutral-900 text-white py-3 px-5 text-sm hover:bg-neutral-700 duration-100 flex justify-center items-center"
+            >
+              {loading ? <span className="buttonLoader"></span> : "Registrarse"}
+            </button>
+          </Form>
+        )}
+      </Formik>
+
+      {visible && <span className="text-red-600">{message}</span>}
     </div>
   );
 }
