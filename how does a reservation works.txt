@@ -1,0 +1,10 @@
+Ahora vamos con la parte de las reservas.
+
+¿como quiero que funcione?
+- Quisiera que haya un calendario, en el cual, obviamente, las fechas que ya pasaron (dias anteriores) aparezcan como "no disponibles" o tachados, cosa que el usuario no pueda reservar en esas fechas.
+- quiero que los periodos de reservas se realicen desde: el dia que hace la reserva hasta el mes siguiente. es decir, cada dia cambiara pero el periodo siempre es de 1 mes.
+esos serán los periodos de reservas
+- las reservas se manejan asi:
+  - como dije antes, habrá un calendario, en donde el usuario podrá elegir la fecha y abajo las horas que quiere jugar (como máximo son 3 horas) y luego le aparece lo que debe pagar, una vez que paga ya se hizo la reserva.
+  - el usuario que haga la reserva se le almacenará el id de la reserva que hizo en su cuenta, y en los documentos de "Reservations" se almacenarán los detalles de las reservas (la cual se guiará de algo clave, y es que, luego de que pase el dia y hora de reserva, se elimina directamente de la bd, es decir, si yo el 1 de octubre reservo 2 horas (de 16 a 18), entonces, el 1 de octubre a las 18 hs se removerá la reserva, ya que se entenderá como "expirada", eso lo manejaré con TTL Indexes, sino algo parecido)
+  - tambien usaré metodos de pagos en mi app, es decir, que el usuario, al hacer la reserva, debe pagar la cantidad. (al ser siempre 10 jugadores, cada uno paga $2000 ARS, es decir, una hora saldrá $20000). pero hay una cosa, si el usuario quiere cancelar la reserva, debe hacerlo antes de 2 hs a que comience su partido (hora que reservó). Siempre tendrá el derecho de cancelar, y si lo hace, la reserva se elimina del documento Reservations, de su array "reservations" y se le devuelve el monto pagado al usuario y ese horario quedara libre ya que se canceló.
