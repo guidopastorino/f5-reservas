@@ -247,7 +247,7 @@ function RegisterPage() {
         )}
       </Formik>
 
-      {visible && <span className="text-red-600">{message}</span>}
+      {visible && <span>{message}</span>}
     </div>
   );
 }
