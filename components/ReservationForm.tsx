@@ -1,8 +1,13 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
+import useUser from '@/hooks/useUser';
+import { ReservationProps } from '@/types/types';
 import 'react-datepicker/dist/react-datepicker.css';
 
 function ReservationForm() {
+  const [reservation, setReservation] = useState<ReservationProps | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [startTime, setStartTime] = useState<string>("");
   const [endTime, setEndTime] = useState<string>("");
@@ -10,7 +15,10 @@ function ReservationForm() {
   const [totalAmount, setTotalAmount] = useState<number>(0);
   const pricePerHour = 20000; // Precio por hora
 
-  // Función para calcular la diferencia de horas y el monto total
+  // Obtener el usuario
+  const user = useUser();
+
+  // Calcular la diferencia de horas y el monto total
   useEffect(() => {
     if (startTime && endTime) {
       const start = new Date(`1970-01-01T${startTime}:00`);
@@ -27,20 +35,30 @@ function ReservationForm() {
     }
   }, [startTime, endTime]);
 
+  // Actualizar el estado de la reserva con los datos actuales
+  useEffect(() => {
+    if (user && selectedDate && startTime && endTime) {
+      setReservation({
+        userId: user._id || '',
+        selectedDate,
+        startTime,
+        endTime,
+        totalHours,
+        totalAmount,
+      });
+    }
+  }, [user, selectedDate, startTime, endTime, totalHours, totalAmount]);
+
   const handleDateChange = (date: Date | null) => {
     setSelectedDate(date);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Aquí podrías manejar la lógica de reserva
-    console.log({
-      selectedDate,
-      startTime,
-      endTime,
-      totalHours,
-      totalAmount
-    });
+    if (reservation) {
+      console.log("Datos de la reserva:", reservation);
+      // Aquí podrías manejar la lógica de reserva, como enviar los datos al servidor
+    }
   };
 
   return (
@@ -53,6 +71,7 @@ function ReservationForm() {
           dateFormat="dd/MM/yyyy"
           minDate={new Date()} // Evitar fechas pasadas
           maxDate={new Date(new Date().setMonth(new Date().getMonth() + 1))} // Periodo máximo de un mes
+          inline // Esto hace que el calendario esté siempre visible
           className="formInput"
           placeholderText="Elige una fecha"
         />
@@ -65,6 +84,7 @@ function ReservationForm() {
           id="startTime"
           value={startTime}
           onChange={(e) => setStartTime(e.target.value)}
+          step="3600" // Limita los intervalos a 1 hora (3600 segundos)
           className="formInput"
           required
         />
@@ -77,6 +97,7 @@ function ReservationForm() {
           id="endTime"
           value={endTime}
           onChange={(e) => setEndTime(e.target.value)}
+          step="3600" // Limita los intervalos a 1 hora (3600 segundos)
           className="formInput"
           required
         />

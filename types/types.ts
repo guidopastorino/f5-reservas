@@ -1,16 +1,16 @@
 export type UserRole = 'admin' | 'user';
 
-export enum ReservationStatus {
-  RESERVED = 'reserved',
-  PENDING = 'pending',
-  CANCELLED = 'cancelled'
+// reservation
+export interface ReservationProps {
+  userId: string;       // ID del usuario que hace la reserva
+  selectedDate: Date;   // Fecha de la reserva
+  startTime: string;    // Hora de inicio
+  endTime: string;      // Hora de fin
+  totalHours: number;   // Total de horas reservadas
+  totalAmount: number;  // Monto total a pagar
 }
 
-export type Reservation = {
-  userId: string;
-  reservedAt: Date;
-  status: ReservationStatus;
-}
+// notification
 
 type NotificationType = 'email' | 'reservation' | 'account'
 

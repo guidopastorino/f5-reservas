@@ -1,13 +1,13 @@
 import mongoose, { Document, Schema } from 'mongoose';
-import { ReservationStatus } from '@/types/types';
 
 interface IReservation extends Document {
-  userId: mongoose.Schema.Types.ObjectId;
-  reservedAt: Date;
-  duration: number; // Duración en horas
-  price: number;    // Precio total de la reserva
-  status: ReservationStatus;
-  cancelableUntil: Date; // Fecha límite para cancelar
+  userId: mongoose.Schema.Types.ObjectId;  // ID del usuario que hizo la reserva
+  reservedDate: Date;                      // Fecha de la reserva
+  startTime: string;                       // Hora de inicio de la reserva
+  endTime: string;                         // Hora de fin de la reserva
+  totalHours: number;                      // Total de horas reservadas
+  totalAmount: number;                     // Monto total a pagar
+  expiresAt: Date;                         // Fecha y hora de expiración de la reserva
 }
 
 const ReservationSchema: Schema = new Schema({
@@ -16,31 +16,34 @@ const ReservationSchema: Schema = new Schema({
     required: true,
     ref: 'User',
   },
-  reservedAt: {
+  reservedDate: {
     type: Date,
     required: true,
   },
-  duration: {
-    type: Number,
-    required: true, // 1, 2 o 3 horas
-    min: 1,
-    max: 3,
-  },
-  price: {
-    type: Number,
-    required: true, // Se calculará en función de las horas y el número de jugadores
-  },
-  cancelableUntil: {
-    type: Date, // Hora límite para cancelar la reserva (2 horas antes de la reserva)
+  startTime: {
+    type: String,
     required: true,
   },
-  status: {
+  endTime: {
     type: String,
-    enum: Object.values(ReservationStatus),
-    default: ReservationStatus.PENDING,
+    required: true,
+  },
+  totalHours: {
+    type: Number,
+    required: true,
+  },
+  totalAmount: {
+    type: Number,
+    required: true,
+  },
+  expiresAt: {
+    type: Date,
+    required: true,
+    index: { expires: 0 },  // TTL Index para eliminar automáticamente la reserva después de la hora de fin
   }
 }, { timestamps: true });
 
+// Verificar si el modelo ya ha sido registrado para evitar errores
 const Reservation = mongoose.models.Reservation || mongoose.model<IReservation>('Reservation', ReservationSchema);
 
 export default Reservation;
