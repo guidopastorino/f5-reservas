@@ -1,7 +1,7 @@
 'use client'
 
 import useUser from '@/hooks/useUser'
-import { Reservation } from '@/types/types'
+import { ReservationProps } from '@/types/types'
 import axios from 'axios'
 import React, { useState } from 'react'
 import { useQuery } from 'react-query'
@@ -23,7 +23,7 @@ export default page
 
 
 const UserReservations = ({ reservationIds }: { reservationIds: string[] }) => {
-  const [reservations, setReservations] = useState<Reservation[]>([])
+  const [reservations, setReservations] = useState<ReservationProps[]>([])
 
   const fetchUserReservations = async () => {
     const response = await axios.get(`/api/reservations/`)
@@ -32,14 +32,14 @@ const UserReservations = ({ reservationIds }: { reservationIds: string[] }) => {
   return (
     <>
       {reservations.map((el, i) => {
-        
+
       })}
     </>
   )
 }
 
 
-const ReservationCard: React.FC<Reservation> = ({ userId, reservedAt, status }) => {
+const ReservationCard: React.FC<ReservationProps> = ({ }) => {
   return (
     <>
       {status}
