@@ -5,7 +5,7 @@ import Navbar from "@/components/Navbar";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: 'Reservas f5',
+  title: 'Reservas F5',
   description: 'Reservar turnos de fútbol 5'
 }
 

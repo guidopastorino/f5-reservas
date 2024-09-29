@@ -25,5 +25,5 @@ export default withAuth(
 
 // Configuración de las rutas que deben estar protegidas
 export const config = {
-  matcher: ["/send-email", "/new", "/privacy-policy", "/settings", "/reservations"],
+  matcher: ["/send-email", "/new", "/privacy-policy", "/settings/:path*", "/reservations"],
 };

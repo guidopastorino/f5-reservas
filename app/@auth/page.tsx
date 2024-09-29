@@ -7,6 +7,7 @@ import { useState } from "react";
 // Form validation
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import Link from "next/link";
 
 export default function page() {
   return (
@@ -45,7 +46,7 @@ function SignInPage() {
   };
 
   return (
-    <div className="shadow-lg mx-auto w-full max-w-80 flex flex-col justify-center items-center gap-5 p-3 rounded-lg m-10">
+    <div className="shadow-lg mx-auto w-full max-w-80 flex flex-col justify-center items-center gap-2 p-3 rounded-lg m-10">
       <span className="font-bold text-2xl">Iniciar sesión</span>
 
       <Formik
@@ -86,29 +87,44 @@ function SignInPage() {
                 className="text-red-600"
               />
             </div>
-            <button
-              disabled={loading || isSubmitting}
-              type="submit"
-              className="w-full mx-auto font-medium my-5 rounded-full bg-neutral-900 text-white py-3 px-5 text-sm hover:bg-neutral-700 duration-100 flex justify-center items-center"
-            >
-              {loading ? <span className="buttonLoader"></span> : "Iniciar sesión"}
-            </button>
+            <div className="flex flex-col gap-2 mt-4">
+              <button
+                disabled={loading || isSubmitting}
+                type="submit"
+                className="w-full mx-auto font-medium rounded-full bg-neutral-900 text-white py-3 px-5 text-sm hover:bg-neutral-700 duration-100 flex justify-center items-center"
+              >
+                {loading ? <span className="buttonLoader"></span> : "Iniciar sesión"}
+              </button>
+            </div>
           </Form>
         )}
       </Formik>
 
+
       {visible && <span className="text-red-600">{message}</span>}
 
-      {/* Modal para registro */}
+      {/* div */}
+      <div className="flex justify-center items-center gap-1 w-full overflow-hidden">
+        <hr className="w-full shrink-0" />
+        <span className="opacity-25">O</span>
+        <hr className="w-full shrink-0" />
+      </div>
+
       <Modal
         buttonTrigger={
-          <button className="w-full mx-auto font-medium my-5 rounded-full bg-green-900 text-white py-3 px-5 text-sm hover:bg-green-700 duration-100 flex justify-center items-center">
+          <button className="w-full mx-auto font-medium rounded-full bg-green-900 text-white py-3 px-5 text-sm hover:bg-green-700 duration-100 flex justify-center items-center">
             Registrarse
           </button>
         }
       >
         <RegisterPage />
       </Modal>
+
+      {/* sign in with google */}
+      <button className="w-full mx-auto font-medium rounded-full bg-gray-50 border py-3 px-5 text-sm hover:bg-gray-100 duration-100 flex justify-start items-center gap-3 whitespace-nowrap text-ellipsis overflow-hidden line-clamp-1">
+        <img className="w-6 h-6 object-contain shrink-0" src="google-logo.webp" />
+        <span>Iniciar sesión con Google</span>
+      </button>
     </div>
   );
 }
