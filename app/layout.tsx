@@ -3,6 +3,7 @@ import App from "./_app";
 import AuthLayout from "@/components/AuthLayout";
 import Navbar from "@/components/Navbar";
 import { Metadata } from "next";
+import NavbarBottom from "@/components/NavbarBottom";
 
 export const metadata: Metadata = {
   title: 'Reservas F5',
@@ -23,9 +24,10 @@ export default function RootLayout({
           <AuthLayout auth={auth}>
             <>
               <Navbar />
-              <div className="w-full max-w-screen-2xl p-5 mx-auto">
+              <div style={{ minHeight: 'calc(100dvh - 56px)' }} className="w-full max-w-screen-2xl p-5 mx-auto h-full">
                 {children}
               </div>
+              <NavbarBottom />
             </>
           </AuthLayout>
         </App>

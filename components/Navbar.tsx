@@ -15,18 +15,13 @@ import Avatar from './Avatar'
 import { MdOutlineEmail } from "react-icons/md";
 import { MdOutlinePersonOutline } from "react-icons/md";
 import { BsCalendarCheck } from "react-icons/bs";
-import { Notification } from '@/types/types'
+import { NavLinkProps, Notification } from '@/types/types'
 import { PiDotsThreeBold } from "react-icons/pi";
 // theme
 import { WiMoonAltFirstQuarter } from "react-icons/wi";
 import { HiOutlineMoon } from "react-icons/hi2";
 import { WiDaySunny } from "react-icons/wi";
 import { BsArrowLeftShort } from "react-icons/bs";
-
-type NavLinkProps = {
-  title: string;
-  route: string;
-}
 
 const Navbar = () => {
   const user = useUser()
@@ -41,7 +36,7 @@ const Navbar = () => {
   const [currentTab, setCurrentTab] = useState<number>(1)
 
   return (
-    <header className='shadow-md bg-white sticky top-0 left-0 right-0 w-full h-14 z-50 px-5'>
+    <header className='hidden md:block shadow-md bg-white sticky top-0 left-0 right-0 w-full h-14 z-50 px-5'>
       <div className='w-full h-full max-w-screen-2xl mx-auto flex justify-between items-center'>
         <Link href={"/"}><IoMdFootball size={50} color='#000' /></Link>
 

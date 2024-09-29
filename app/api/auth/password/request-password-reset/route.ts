@@ -38,6 +38,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ message: "Correo enviado" }, { status: 200 });
   } catch (error) {
     console.error("Error al enviar el correo:", error);
-    return NextResponse.json({ error: "Error al enviar el correo" }, { status: 500 });
+    return NextResponse.json({ error: error instanceof Error ? error.message : "Error al enviar el correo" }, { status: 500 });
   }
 }

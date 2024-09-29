@@ -46,8 +46,8 @@ function SignInPage() {
   };
 
   return (
-    <div className="shadow-lg mx-auto w-full max-w-80 flex flex-col justify-center items-center gap-2 p-3 rounded-lg m-10">
-      <span className="font-bold text-2xl">Iniciar sesión</span>
+    <div className="sm:shadow-lg mx-auto sm:my-10 w-full max-w-80 flex flex-col justify-center items-center gap-2 p-3 sm:rounded-lg">
+      <span className="font-bold text-3xl sm:text-2xl m-4 sm:m-0">Iniciar sesión</span>
 
       <Formik
         initialValues={{
@@ -59,13 +59,13 @@ function SignInPage() {
       >
         {({ isSubmitting }) => (
           <Form className="w-full">
-            <div className="flex flex-col gap-1">
-              <label htmlFor="usernameOrEmail">Usuario o Email</label>
+            <div className="flex flex-col gap-1 mb-2">
               <Field
                 type="text"
                 id="usernameOrEmail"
                 name="usernameOrEmail"
-                className="border"
+                className="formInput"
+                placeholder="Usuario o Email"
               />
               <ErrorMessage
                 name="usernameOrEmail"
@@ -74,12 +74,12 @@ function SignInPage() {
               />
             </div>
             <div className="flex flex-col gap-1">
-              <label htmlFor="password">Contraseña</label>
               <Field
                 type="password"
                 id="password"
                 name="password"
-                className="border"
+                className="formInput"
+                placeholder="Contraseña"
               />
               <ErrorMessage
                 name="password"
@@ -195,14 +195,14 @@ function RegisterPage() {
         onSubmit={handleSubmit}
       >
         {({ isSubmitting }) => (
-          <Form className="w-full">
+          <Form className="w-full flex items-stretch gap-3 flex-col">
             <div className="flex flex-col gap-1">
-              <label htmlFor="fullname">Nombre Completo</label>
               <Field
                 type="text"
                 id="fullname"
                 name="fullname"
-                className="border"
+                className="formInput"
+                placeholder="Nombre Completo"
               />
               <ErrorMessage
                 name="fullname"
@@ -211,12 +211,12 @@ function RegisterPage() {
               />
             </div>
             <div className="flex flex-col gap-1">
-              <label htmlFor="username">Nombre de Usuario</label>
               <Field
                 type="text"
                 id="username"
                 name="username"
-                className="border"
+                className="formInput"
+                placeholder="Nombre de Usuario"
               />
               <ErrorMessage
                 name="username"
@@ -225,12 +225,12 @@ function RegisterPage() {
               />
             </div>
             <div className="flex flex-col gap-1">
-              <label htmlFor="email">Email</label>
               <Field
                 type="email"
                 id="email"
                 name="email"
-                className="border"
+                className="formInput"
+                placeholder="Email"
               />
               <ErrorMessage
                 name="email"
@@ -239,12 +239,12 @@ function RegisterPage() {
               />
             </div>
             <div className="flex flex-col gap-1">
-              <label htmlFor="password">Contraseña</label>
               <Field
                 type="password"
                 id="password"
                 name="password"
-                className="border"
+                className="formInput"
+                placeholder="Contraseña"
               />
               <ErrorMessage
                 name="password"

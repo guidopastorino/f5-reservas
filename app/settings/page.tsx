@@ -97,6 +97,13 @@ const Page = () => {
         {loading ? <span className="buttonLoader"></span> : "Eliminar cuenta"}
       </button>
 
+      <button
+        onClick={() => signOut()}
+        className="w-full max-w-max mx-auto font-medium my-5 rounded-full bg-neutral-900 text-white py-3 px-5 text-sm hover:bg-neutral-700 duration-100 flex justify-center items-center"
+      >
+        Cerrar sesión
+      </button>
+
       <Link href={"/settings/password"} className="text-start text-sm no-underline hover:underline w-full block">Olvidaste tu contraseña?</Link>
 
       {visible && <span>{message}</span>}

@@ -20,6 +20,10 @@ button>* {
   pointer-events: none;
 }
 
+.formInput {
+  @apply p-2 border outline-none hover:border-black focus:border-black focus-visible:border-black text-base;
+}
+
 /* loader */
 
 .loader {

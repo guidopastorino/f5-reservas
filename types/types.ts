@@ -22,3 +22,10 @@ export type Notification = {
   read: boolean; // false by default
   createdAt?: Date;
 }
+
+// navbar
+
+export type NavLinkProps = {
+  title: string;
+  route: string;
+}
