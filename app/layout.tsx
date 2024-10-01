@@ -24,7 +24,7 @@ export default function RootLayout({
           <AuthLayout auth={auth}>
             <>
               <Navbar />
-              <div style={{ minHeight: 'calc(100dvh - 56px)' }} className="w-full max-w-screen-2xl p-5 mx-auto h-full mb-14">
+              <div style={{ minHeight: 'calc(100dvh - 56px)' }} className="w-full max-w-screen-2xl p-5 mx-auto h-full md:mb-0 mb-14">
                 {children}
               </div>
               <NavbarBottom />
