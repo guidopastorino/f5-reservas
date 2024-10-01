@@ -87,7 +87,7 @@ const Modal = ({ buttonTrigger, children }: ModalProps) => {
                 >
                     <div
                         ref={ModalRef}
-                        className={`${animation ? 'scale-100' : 'scale-95'} w-[90%] max-w-96 bg-white shadow-lg rounded-md overflow-hidden duration-200 select-none`}
+                        className={`${animation ? 'scale-100' : 'scale-95'} w-[90%] max-w-96 shadow-lg rounded-md overflow-hidden duration-200 select-none`}
                     >
                         {children}
                     </div>

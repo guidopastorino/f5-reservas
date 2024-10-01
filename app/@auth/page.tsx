@@ -91,7 +91,7 @@ function SignInPage() {
               <button
                 disabled={loading || isSubmitting}
                 type="submit"
-                className="w-full mx-auto font-medium rounded-full bg-neutral-900 text-white py-3 px-5 text-sm hover:bg-neutral-700 duration-100 flex justify-center items-center"
+                className="w-full mx-auto font-medium rounded-full bg-neutral-900 text-white dark:bg-neutral-800 py-3 px-5 text-sm dark:hover:bg-neutral-600 hover:bg-neutral-700 duration-100 flex justify-center items-center"
               >
                 {loading ? <span className="buttonLoader"></span> : "Iniciar sesión"}
               </button>
@@ -100,15 +100,11 @@ function SignInPage() {
         )}
       </Formik>
 
+      <Link href={"/settings/password"} className="block w-full text-start text-sm dark:text-neutral-500 select-none underline-none hover:underline">Has olvidado tu contraseña?</Link>
 
       {visible && <span className="text-red-600">{message}</span>}
 
-      {/* div */}
-      <div className="flex justify-center items-center gap-1 w-full overflow-hidden">
-        <hr className="w-full shrink-0" />
-        <span className="opacity-25">O</span>
-        <hr className="w-full shrink-0" />
-      </div>
+      <hr className="w-full h-[1px] border-none bg-neutral-300 dark:bg-neutral-700 my-4" />
 
       <Modal
         buttonTrigger={
@@ -123,12 +119,11 @@ function SignInPage() {
       {/* sign in with google */}
       <button className="w-full mx-auto font-medium rounded-full bg-gray-50 border py-3 px-5 text-sm hover:bg-gray-100 duration-100 flex justify-start items-center gap-3 whitespace-nowrap text-ellipsis overflow-hidden line-clamp-1">
         <img className="w-6 h-6 object-contain shrink-0" src="google-logo.webp" />
-        <span>Iniciar sesión con Google</span>
+        <span className="text-black">Iniciar sesión con Google</span>
       </button>
     </div>
   );
 }
-
 
 // Register
 const RegisterSchema = Yup.object().shape({
@@ -181,7 +176,7 @@ function RegisterPage() {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center gap-5 p-2 rounded-lg m-10">
+    <div className="flex flex-col justify-center items-center gap-5 rounded-lg p-10 bg-white dark:bg-neutral-800">
       <span className="font-bold text-2xl">Registrarse</span>
 
       <Formik
