@@ -21,7 +21,6 @@ const page = () => {
 
 export default page
 
-
 const UserReservations = ({ reservationIds }: { reservationIds: string[] }) => {
   const [reservations, setReservations] = useState<ReservationProps[]>([])
 

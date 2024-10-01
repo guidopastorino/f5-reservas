@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import User from "@/models/User"; // Asegúrate de importar el modelo de usuario y el tipo IUser
-import dbConnect from "@/lib/dbConnect"; // Importa la conexión a la base de datos
+import User from "@/models/User";
+import dbConnect from "@/lib/dbConnect";
 
 interface IUser {
   _id: string;
@@ -15,13 +15,12 @@ interface IUser {
 // Ruta para obtener los datos de un usuario a través de su id
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
-    // Conexión a la base de datos
     await dbConnect();
 
-    const { id } = params; // Aquí obtienes el id desde los parámetros de la URL
+    const { id } = params;
 
     // Buscar el usuario en la base de datos
-    const user = await User.findById(id).lean<IUser>(); // Le indicas a TypeScript que el usuario es del tipo IUser
+    const user = await User.findById(id).lean<IUser>();
 
     if (!user) {
       return NextResponse.json({ error: "Usuario no encontrado" }, { status: 404 });

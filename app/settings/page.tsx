@@ -4,7 +4,7 @@ import useUser from '@/hooks/useUser'
 import axios from 'axios';
 import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
 const Page = () => {
   const user = useUser();

@@ -22,10 +22,9 @@ import { WiMoonAltFirstQuarter } from "react-icons/wi";
 import { HiOutlineMoon } from "react-icons/hi2";
 import { WiDaySunny } from "react-icons/wi";
 import { BsArrowLeftShort } from "react-icons/bs";
+import ThemeHandler from './ThemeHandler'
 
 const Navbar = () => {
-  const user = useUser()
-
   const links: NavLinkProps[] = [
     { title: "Inicio", route: "/" },
     { title: "Mis reservas", route: "/reservations" },
@@ -33,12 +32,12 @@ const Navbar = () => {
     { title: "Politica de privacidad", route: "/privacy-policy" },
   ]
 
-  const [currentTab, setCurrentTab] = useState<number>(1)
+  const user = useUser()
 
   return (
-    <header className='hidden md:block shadow-md bg-white sticky top-0 left-0 right-0 w-full h-14 z-50 px-5'>
+    <header className='hidden md:block shadow-md bg-white dark:bg-neutral-900 dark:text-white sticky top-0 left-0 right-0 w-full h-14 z-50 px-5'>
       <div className='w-full h-full max-w-screen-2xl mx-auto flex justify-between items-center'>
-        <Link href={"/"}><IoMdFootball size={50} color='#000' /></Link>
+        <Link href={"/"}><IoMdFootball size={50} className='text-black dark:text-neutral-500' /></Link>
 
         <ul className='flex justify-center items-center gap-3'>
           {user.role == 'admin' && <NavLink title='Enviar emails' route='/send-email' />}
@@ -73,48 +72,7 @@ const Navbar = () => {
           </DropdownMenu>
 
           {/* dropdown config menu */}
-          <DropdownMenu
-            trigger={<button className='w-10 h-10 bg-black rounded-full overflow-hidden'>
-              <Avatar fullname={user.fullname || ''} color={user.color || ''} />
-            </button>}
-          >
-            {
-              (currentTab == 1)
-                ? <>
-                  <div>
-                    <div className='p-2 flex flex-col justify-center items-start gap-0.5'>
-                      <div className="flex justify-start items-center gap-1">
-                        <span className="text-lg font-medium block">
-                          {user.fullname}
-                        </span>
-                        {user.role == 'admin' && <MdVerified color='#1d9bf0' size={20} />}
-                      </div>
-                      <span className="text-md block">
-                        {user.email}
-                      </span>
-                    </div>
-                    <ul>
-                      <li onClick={() => setCurrentTab(2)} className='cursor-pointer duration-75 p-2 hover:bg-neutral-200 w-full'>Cambiar aspecto</li>
-                      <li className='cursor-pointer duration-75 p-2 hover:bg-neutral-200 w-full'>
-                        <Link className="w-full" href={"/settings"}>Configuración</Link>
-                      </li>
-                      <li className='cursor-pointer duration-75 p-2 hover:bg-neutral-200 w-full' onClick={() => signOut()}>Cerrar sesion</li>
-                    </ul>
-                  </div>
-                </>
-                : <>
-                  <div>
-                    <div className="flex justify-start items-center gap-2">
-                      <div onClick={() => setCurrentTab(1)}>
-                        <BsArrowLeftShort className='w-9 h-9 flex justify-center items-center rounded-full hover:bg-gray-100 cursor-pointer text-sm' />
-                      </div>
-                      <span className='font-medium'>Atrás</span>
-                    </div>
-                    <ChangeThemeMenu />
-                  </div>
-                </>
-            }
-          </DropdownMenu>
+          <ProfileOptionsMenu />
         </div>
       </div>
     </header>
@@ -130,6 +88,59 @@ const NavLink: React.FC<NavLinkProps> = ({ title, route }) => {
     <li>
       <Link href={route} className={`${pathname == route ? '' : 'opacity-40 active:opacity-90 hover:opacity-100 duration-100'} font-medium`}>{title}</Link>
     </li>
+  )
+}
+
+const ProfileOptionsMenu = () => {
+  const user = useUser()
+
+  const [currentTab, setCurrentTab] = useState<number>(1)
+
+  return (
+    <DropdownMenu
+      trigger={<button className='w-10 h-10 bg-black rounded-full overflow-hidden'>
+        <Avatar fullname={user.fullname || ''} color={user.color || ''} />
+      </button>}
+    >
+      {
+        // options tab
+        (currentTab == 1)
+          ? <>
+            <div className='dark:bg-neutral-900 dark:text-white'>
+              <div className='p-2 flex flex-col justify-center items-start gap-0.5'>
+                <div className="flex justify-start items-center gap-1">
+                  <span className="text-lg font-medium block">
+                    {user.fullname}
+                  </span>
+                  {user.role == 'admin' && <MdVerified color='#1d9bf0' size={20} />}
+                </div>
+                <span className="text-md block">
+                  {user.email}
+                </span>
+              </div>
+              <ul>
+                <li onClick={() => setCurrentTab(2)} className='cursor-pointer duration-75 p-2 hover:bg-neutral-200 w-full'>Cambiar aspecto</li>
+                <li className='cursor-pointer duration-75 p-2 hover:bg-neutral-200 w-full'>
+                  <Link className="w-full" href={"/settings"}>Configuración</Link>
+                </li>
+                <li className='cursor-pointer duration-75 p-2 hover:bg-neutral-200 w-full' onClick={() => signOut()}>Cerrar sesion</li>
+              </ul>
+            </div>
+          </>
+          : <>
+            {/* theme tab */}
+            <div>
+              <div className="flex justify-start items-center gap-2">
+                <div onClick={() => setCurrentTab(1)}>
+                  <BsArrowLeftShort className='w-9 h-9 flex justify-center items-center rounded-full hover:bg-gray-100 cursor-pointer text-sm' />
+                </div>
+                <span className='font-medium'>Atrás</span>
+              </div>
+              <ChangeThemeMenu />
+            </div>
+          </>
+      }
+    </DropdownMenu>
   )
 }
 
@@ -170,19 +181,21 @@ const NotificationCard: React.FC<Notification> = ({ _id, title, description, typ
 
 const ChangeThemeMenu = () => {
   return (
-    <div>
-      <li className="flex justify-start items-center gap-2 hover:bg-gray-100 active:brightness-95 p-2 cursor-pointer">
-        <WiDaySunny className='text-xl' />
-        <span>Light</span>
-      </li>
-      <li className="flex justify-start items-center gap-2 hover:bg-gray-100 active:brightness-95 p-2 cursor-pointer">
-        <HiOutlineMoon className='text-xl' />
-        <span>Dark</span>
-      </li>
-      <li className="flex justify-start items-center gap-2 hover:bg-gray-100 active:brightness-95 p-2 cursor-pointer">
-        <WiMoonAltFirstQuarter className='text-xl' />
-        <span>System</span>
-      </li>
-    </div>
+    <ThemeHandler>{(currentTheme, systemTheme, changeTheme, currentIcon) => (
+      <div className='dark:bg-neutral-900 dark:text-white'>
+        <li onClick={() => changeTheme('light')} className={`flex justify-start items-center gap-2 hover:bg-gray-100 active:brightness-95 p-2 cursor-pointer ${currentTheme == 'light' ? 'bg-gray-200' : ''}`}>
+          <WiDaySunny className='text-xl' />
+          <span>Light</span>
+        </li>
+        <li onClick={() => changeTheme('dark')} className={`flex justify-start items-center gap-2 hover:bg-gray-100 active:brightness-95 p-2 cursor-pointer ${currentTheme == 'dark' ? 'bg-gray-200' : ''}`}>
+          <HiOutlineMoon className='text-xl' />
+          <span>Dark</span>
+        </li>
+        <li onClick={() => changeTheme('system')} className={`flex justify-start items-center gap-2 hover:bg-gray-100 active:brightness-95 p-2 cursor-pointer ${currentTheme == 'system' ? 'bg-gray-200' : ''}`}>
+          <WiMoonAltFirstQuarter className='text-xl' />
+          <span>System</span>
+        </li>
+      </div>
+    )}</ThemeHandler>
   )
 }
