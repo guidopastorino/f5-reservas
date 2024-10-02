@@ -12,15 +12,23 @@ interface IUser {
   role?: string;
 }
 
-// Ruta para obtener los datos de un usuario a través de su id
+// Ruta para obtener los datos de un usuario a través de su googleId o _id
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     await dbConnect();
 
     const { id } = params;
 
-    // Buscar el usuario en la base de datos
-    const user = await User.findById(id).lean<IUser>();
+    let user = null;
+    if (id.match(/^[0-9a-fA-F]{24}$/)) {
+      // Si el id tiene el formato de un ObjectId, buscar por _id
+      user = await User.findById(id).lean<IUser>();
+    }
+
+    // Si no se encontró por _id, buscar por googleId
+    if (!user) {
+      user = await User.findOne({ googleId: id }).lean<IUser>();
+    }
 
     if (!user) {
       return NextResponse.json({ error: "Usuario no encontrado" }, { status: 404 });
@@ -37,7 +45,8 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   }
 }
 
-// Ruta para eliminar un usuario a través de su id
+
+// Ruta para eliminar un usuario a través de su id o googleId
 export async function DELETE(req: Request, { params }: { params: { id: string } }) {
   const { id } = params;
 
@@ -45,14 +54,22 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
     // Conectar a la base de datos
     await dbConnect();
 
-    // Verificar si el usuario existe
-    const user = await User.findById(id);
+    // Verificar si el id es un ObjectId válido
+    let user;
+    if (id.match(/^[0-9a-fA-F]{24}$/)) {
+      // Buscar por _id si el id es un ObjectId válido
+      user = await User.findById(id);
+    } else {
+      // Buscar por googleId si el id no es un ObjectId válido
+      user = await User.findOne({ googleId: id });
+    }
+
     if (!user) {
       return NextResponse.json({ error: "Usuario no encontrado" }, { status: 404 });
     }
 
     // Eliminar el usuario
-    await User.findByIdAndDelete(id);
+    await User.findByIdAndDelete(user._id);
 
     return NextResponse.json({ message: "Usuario eliminado exitosamente" }, { status: 200 });
   } catch (error) {

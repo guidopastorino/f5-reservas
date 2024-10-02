@@ -20,7 +20,7 @@ export default function RootLayout({
   const pathname = usePathname();
 
   // Definir rutas en las que no quieres mostrar los Navbars
-  const hideNavbarRoutes = ["/auth", "/account/password", "/account/reset-password"]; 
+  const hideNavbarRoutes = ["/privacy-policy", "/auth", "/account/password", "/account/reset-password"]; 
 
   const shouldHideNavbar = hideNavbarRoutes.includes(pathname);
 

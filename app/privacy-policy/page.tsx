@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React from 'react';
 
 const page = () => {
@@ -13,10 +14,13 @@ const page = () => {
 
   return (
     <main>
+      <Link href="/">Volver al inicio</Link>
+
       <header className='mb-6'>
         <h1 className='text-4xl font-bold'>Política de Privacidad</h1>
         <p className='mt-2 text-lg'><strong>Última actualización: </strong>{lastUpdatedDate}</p>
       </header>
+
 
       <section className='mb-5'>
         <p>En <strong>Reservas F5</strong> ("nosotros"), nos tomamos muy en serio la privacidad de nuestros usuarios. Esta Política de Privacidad describe cómo recopilamos, usamos y protegemos la información personal de los usuarios de nuestra aplicación de reservas de fútbol 5. Al utilizar nuestra Aplicación, aceptas las prácticas descritas en esta Política de Privacidad.</p>
@@ -24,7 +28,7 @@ const page = () => {
 
       <section className='mb-5'>
         <h2 className='text-2xl font-semibold mb-2'>1. Información que Recopilamos</h2>
-        
+
         <h3 className='text-xl font-semibold pl-3 my-3'>a. Información que proporcionas</h3>
         <p>Cuando te registras en nuestra Aplicación, recopilamos la siguiente información personal que nos proporcionas:</p>
         <ul className='list-disc list-inside ml-5'>

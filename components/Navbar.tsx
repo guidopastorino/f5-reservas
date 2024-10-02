@@ -29,7 +29,6 @@ const Navbar = () => {
     { title: "Inicio", route: "/" },
     { title: "Mis reservas", route: "/reservations" },
     { title: "Nueva reserva", route: "/new" },
-    { title: "Politica de privacidad", route: "/privacy-policy" },
   ]
 
   const user = useUser()

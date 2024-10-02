@@ -54,6 +54,10 @@ function SignInPage() {
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    await signIn("google", { callbackUrl: "/" });
+  };
+
   return (
     <div className="sm:shadow-lg mx-auto sm:my-10 w-full max-w-80 flex flex-col justify-center items-center gap-2 p-3 sm:rounded-lg">
       <span className="font-bold text-3xl sm:text-2xl m-4 sm:m-0">Iniciar sesión</span>
@@ -126,10 +130,12 @@ function SignInPage() {
       </Modal>
 
       {/* sign in with google */}
-      <button className="w-full mx-auto font-medium rounded-full bg-gray-50 border py-3 px-5 text-sm hover:bg-gray-100 duration-100 flex justify-start items-center gap-3 whitespace-nowrap text-ellipsis overflow-hidden line-clamp-1">
+      <button onClick={handleGoogleSignIn} className="w-full mx-auto font-medium rounded-full bg-gray-50 border py-3 px-5 text-sm hover:bg-gray-100 duration-100 flex justify-start items-center gap-3 whitespace-nowrap text-ellipsis overflow-hidden line-clamp-1">
         <img className="w-6 h-6 object-contain shrink-0" src="google-logo.webp" />
         <span className="text-black">Iniciar sesión con Google</span>
       </button>
+
+      <Link className="block my-3 text-sm dark:text-neutral-500 select-none underline-none hover:underline" href="/privacy-policy">Nuestra política de privacidad</Link>
     </div>
   );
 }

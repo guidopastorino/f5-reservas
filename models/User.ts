@@ -2,21 +2,21 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 
 const UserSchema = new mongoose.Schema({
-  fullname: { type: String, required: true },
+  fullname: { type: String },
   username: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-  color: { type: String, required: true },
+  password: { type: String },
+  color: { type: String },
   role: {
     type: String,
     enum: ['admin', 'user'],
-    default: 'user',        
-    required: true
+    default: 'user'
   },
   reservations: {
     type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Reservation' }],
     default: [] // Default to an empty array
-  }
+  },
+  googleId: { type: String },
 }, { timestamps: true });
 
 // Method to compare passwords
