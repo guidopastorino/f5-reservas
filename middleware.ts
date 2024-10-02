@@ -20,10 +20,10 @@ export default withAuth(
     callbacks: {
       authorized: ({ token }) => !!token, // Usuario autenticado si hay un token
     },
-  }
+  },
 );
 
 // Configuración de las rutas que deben estar protegidas
 export const config = {
-  matcher: ["/send-email", "/new", "/privacy-policy", "/settings/:path*", "/reservations"],
+  matcher: ["/", "/send-email", "/new", "/privacy-policy", "/settings/:path*", "/reservations"],
 };

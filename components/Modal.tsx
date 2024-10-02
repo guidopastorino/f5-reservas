@@ -1,76 +1,83 @@
-import React, { cloneElement, useEffect, useRef, useState } from 'react'
-import ReactDOM from 'react-dom'
+import React, { cloneElement, useEffect, useRef, useState } from 'react';
+import ReactDOM from 'react-dom';
 
 interface ModalProps {
     buttonTrigger: React.ReactElement<any, any>;
-    children: React.ReactNode
+    children: React.ReactNode;
 }
 
 const Modal = ({ buttonTrigger, children }: ModalProps) => {
-    const [modal, setModal] = useState<boolean>(false)
-    const [animation, setAnimation] = useState<boolean>(false)
+    const [modal, setModal] = useState<boolean>(false);
+    const [animation, setAnimation] = useState<boolean>(false);
     const ModalRef = useRef<HTMLDivElement | null>(null);
+    const [isClient, setIsClient] = useState<boolean>(false);
+    const [isScreenHeightLarge, setIsScreenHeightLarge] = useState<boolean>(false);
 
-    // Estado para controlar la altura de la ventana
-    const [isScreenHeightLarge, setIsScreenHeightLarge] = useState<boolean>(window.innerHeight > 400);
+    // Determina si estamos en el cliente
+    useEffect(() => {
+        setIsClient(true);
+        setIsScreenHeightLarge(window.innerHeight > 400); // solo se ejecuta en el cliente
+    }, []);
 
     // Monitorea los cambios en la altura de la pantalla
     useEffect(() => {
-        const handleResize = () => {
-            setIsScreenHeightLarge(window.innerHeight > 500);
-        };
+        if (isClient) {
+            const handleResize = () => {
+                setIsScreenHeightLarge(window.innerHeight > 500);
+            };
 
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
+            window.addEventListener('resize', handleResize);
+            return () => window.removeEventListener('resize', handleResize);
+        }
+    }, [isClient]);
 
     useEffect(() => {
         if (modal) {
-            setAnimation(true)
+            setAnimation(true);
         } else {
-            setAnimation(false)
+            setAnimation(false);
         }
-    }, [modal])
+    }, [modal]);
 
     useEffect(() => {
         if (!animation) {
             setTimeout(() => {
-                setModal(false)
+                setModal(false);
             }, 300);
         }
-    }, [animation])
+    }, [animation]);
 
     useEffect(() => {
-        let handler1 = (e: KeyboardEvent) => {
-            if (modal && e.code == "Escape") {
-                setAnimation(false)
+        const handler1 = (e: KeyboardEvent) => {
+            if (modal && e.code === 'Escape') {
+                setAnimation(false);
             }
-        }
+        };
 
-        let handler2 = (e: MouseEvent) => {
+        const handler2 = (e: MouseEvent) => {
             if (modal && ModalRef.current) {
                 if (!ModalRef.current.contains(e.target as Node)) {
-                    setAnimation(false)
+                    setAnimation(false);
                 }
             }
-        }
+        };
 
-        document.addEventListener("keyup", handler1)
-        document.addEventListener("mousedown", handler2)
+        document.addEventListener('keyup', handler1);
+        document.addEventListener('mousedown', handler2);
 
         return () => {
-            document.removeEventListener("keyup", handler1)
-            document.removeEventListener("mousedown", handler2)
-        }
-    })
+            document.removeEventListener('keyup', handler1);
+            document.removeEventListener('mousedown', handler2);
+        };
+    });
 
     useEffect(() => {
-        const element = document.querySelector("body")
+        const element = document.querySelector('body');
 
         if (element) {
-            element.classList.toggle("overflow-hidden", modal)
+            element.classList.toggle('overflow-hidden', modal);
         }
-    }, [modal])
+    }, [modal]);
 
     return (
         <>
@@ -95,7 +102,7 @@ const Modal = ({ buttonTrigger, children }: ModalProps) => {
                 document.body
             )}
         </>
-    )
-}
+    );
+};
 
-export default Modal
+export default Modal;

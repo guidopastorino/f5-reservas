@@ -104,8 +104,6 @@ const Page = () => {
         Cerrar sesión
       </button>
 
-      <Link href={"/settings/password"} className="text-start text-sm no-underline hover:underline w-full block">Olvidaste tu contraseña?</Link>
-
       {visible && <span>{message}</span>}
     </div>
   );

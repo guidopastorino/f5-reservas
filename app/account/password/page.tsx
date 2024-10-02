@@ -6,6 +6,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useShowMessage } from "@/hooks/useShowMessage";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 
 const ForgotPasswordSchema = Yup.object().shape({
   email: Yup.string().email("Correo electrónico no válido").required("El correo es obligatorio"),
@@ -57,6 +58,7 @@ const ForgotPasswordPage = () => {
         </button>
       </form>
       {visible && <p>{message}</p>}
+      <Link href="/">Volver al inicio</Link>
     </div>
   );
 };

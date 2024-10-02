@@ -3,16 +3,24 @@
 import Modal from "@/components/Modal";
 import { useShowMessage } from "@/hooks/useShowMessage";
 import { signIn, useSession } from "next-auth/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 // Form validation
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import Loader from "@/components/Loader";
 
 export default function page() {
-  return (
-    <SignInPage />
-  )
+  const { status } = useSession()
+
+  if (status == 'loading') return <Loader />
+
+  if (status == 'authenticated') {
+    redirect("/")
+  } else if (status == 'unauthenticated') {
+    return <SignInPage />
+  }
 }
 
 // Sign In
@@ -39,10 +47,11 @@ function SignInPage() {
 
     if (result?.error) {
       showMessage(result?.error);
+      setLoading(false);
     } else {
+      showMessage("Iniciando sesión...")
       if (typeof window !== "undefined") window.location.href = result?.url || "/";
     }
-    setLoading(false);
   };
 
   return (
@@ -100,9 +109,9 @@ function SignInPage() {
         )}
       </Formik>
 
-      <Link href={"/settings/password"} className="block w-full text-start text-sm dark:text-neutral-500 select-none underline-none hover:underline">Has olvidado tu contraseña?</Link>
+      <Link href={"/account/password"} className="block w-full text-start text-sm dark:text-neutral-500 select-none underline-none hover:underline">Has olvidado tu contraseña?</Link>
 
-      {visible && <span className="text-red-600">{message}</span>}
+      {visible && <span>{message}</span>}
 
       <hr className="w-full h-[1px] border-none bg-neutral-300 dark:bg-neutral-700 my-4" />
 

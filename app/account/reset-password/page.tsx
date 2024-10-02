@@ -6,6 +6,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useRouter } from "next/router";
 import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 
 const ResetPasswordSchema = Yup.object().shape({
   password: Yup.string().min(6, "La contraseña debe tener al menos 6 caracteres").required("La contraseña es obligatoria"),
@@ -58,6 +59,7 @@ const ResetPasswordPage = () => {
         </button>
       </form>
       {message && <p>{message}</p>}
+      <Link href="/">Volver al inicio</Link>
     </div>
   );
 };

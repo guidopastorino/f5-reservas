@@ -16,7 +16,7 @@ export async function POST(req: Request) {
   }
 
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET!, { expiresIn: "1h" });
-  const resetUrl = `${process.env.NEXTAUTH_URL}/settings/reset-password?token=${token}`;
+  const resetUrl = `${process.env.NEXTAUTH_URL}/account/reset-password?token=${token}`;
 
   const transporter = nodemailer.createTransport({
     service: "gmail",

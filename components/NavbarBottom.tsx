@@ -53,7 +53,7 @@ const NavbarBottom = () => {
 
   return (
     <nav className={`
-      block md:hidden h-14 fixed z-50 bg-white dark:bg-neutral-900 w-full border-t dark:border-neutral-600 duration-500
+      block md:hidden h-14 fixed z-40 bg-white dark:bg-neutral-900 w-full border-t dark:border-neutral-600 duration-500
       ${isHidden ? 'bottom-[-100%]' : 'bottom-0'}
     `}>
       <ul className={`flex justify-around items-center gap-3 text-[26px] h-full`}>
