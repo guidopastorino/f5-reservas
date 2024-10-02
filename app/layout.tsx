@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 // import { Metadata } from "next";
 import NavbarBottom from "@/components/NavbarBottom";
 import { usePathname } from 'next/navigation';
+import Head from "next/head";
 
 // export const metadata: Metadata = {
 //   title: 'Reservas F5',
@@ -26,6 +27,9 @@ export default function RootLayout({
 
   return (
     <html lang="en">
+      <Head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0" />
+      </Head>
       <body>
         <App>
           <>
