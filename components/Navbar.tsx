@@ -10,7 +10,6 @@ import { BiBell } from 'react-icons/bi'
 import useUser from '@/hooks/useUser'
 // 
 import { MdVerified } from "react-icons/md";
-import Avatar from './Avatar'
 // 
 import { MdOutlineEmail } from "react-icons/md";
 import { MdOutlinePersonOutline } from "react-icons/md";
@@ -23,6 +22,7 @@ import { HiOutlineMoon } from "react-icons/hi2";
 import { WiDaySunny } from "react-icons/wi";
 import { BsArrowLeftShort } from "react-icons/bs";
 import ThemeHandler from './ThemeHandler'
+import ProfilePicture from './ProfilePicture'
 
 const Navbar = () => {
   const links: NavLinkProps[] = [
@@ -98,7 +98,7 @@ const ProfileOptionsMenu = () => {
   return (
     <DropdownMenu
       trigger={<button className='w-10 h-10 bg-black rounded-full overflow-hidden'>
-        <Avatar fullname={user.fullname || ''} color={user.color || ''} />
+        <ProfilePicture className='w-10 h-10 object-contain' />
       </button>}
     >
       {

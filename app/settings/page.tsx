@@ -1,9 +1,9 @@
 'use client'
+import ProfilePicture from '@/components/ProfilePicture';
 import { useShowMessage } from '@/hooks/useShowMessage';
 import useUser from '@/hooks/useUser'
 import axios from 'axios';
 import { signOut, useSession } from 'next-auth/react';
-import Link from 'next/link';
 import React, { useState } from 'react'
 
 const Page = () => {
@@ -21,13 +21,6 @@ const Page = () => {
 
     return formattedDate
   }
-
-  // Extrae las iniciales del nombre completo del usuario
-  const initials = (user.fullname || '')
-    .split(' ')
-    .map(name => name.charAt(0).toUpperCase())
-    .join('');
-
 
   // Función para eliminar el usuario
   const { data: session } = useSession()
@@ -57,13 +50,7 @@ const Page = () => {
 
   return (
     <div className="w-full border max-w-screen-lg mx-auto p-4">
-      {/* Círculo de color dinámico */}
-      <div
-        className='w-40 h-40 overflow-hidden rounded-full flex justify-center items-center text-white font-bold text-6xl'
-        style={{ backgroundColor: user.color || '#000' }} // Usa color dinámico o negro como fallback
-      >
-        <span>{initials}</span>
-      </div>
+      <ProfilePicture className="w-full max-w-40 aspect-square" />
 
       <div className="mt-4">
         Cuenta creada el {formatDate(user.createdAt || '')}
