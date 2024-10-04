@@ -130,7 +130,7 @@ function SignInPage() {
       </Modal>
 
       {/* sign in with google */}
-      <button onClick={handleGoogleSignIn} className="w-full mx-auto font-medium rounded-full bg-gray-50 border py-3 px-5 text-sm hover:bg-gray-100 duration-100 flex justify-start items-center gap-3 whitespace-nowrap text-ellipsis overflow-hidden line-clamp-1">
+      <button onClick={handleGoogleSignIn} className="w-full mx-auto font-medium rounded-full bg-gray-100 border py-3 px-5 text-sm hover:bg-gray-200 active:bg-gray-300 duration-100 flex justify-start items-center gap-3 whitespace-nowrap text-ellipsis overflow-hidden line-clamp-1">
         <img className="w-6 h-6 object-contain shrink-0" src="google-logo.webp" />
         <span className="text-black">Iniciar sesión con Google</span>
       </button>

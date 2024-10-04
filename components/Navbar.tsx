@@ -49,12 +49,12 @@ const Navbar = () => {
         <div className='flex justify-center items-center gap-3'>
           {/* notifications menu */}
           <DropdownMenu
-            trigger={<button className='w-10 h-10 flex justify-center items-center rounded-full border'>
+            trigger={<button className='w-10 h-10 flex justify-center items-center rounded-full'>
               <BiBell />
             </button>}
           >
             <div className='flex flex-col justify-start items-start gap-0.5 w-80 max-h-96 h-[70vh] overflow-auto'>
-              <div className="p-3 border-b w-full text-start sticky top-0 bg-white z-50">
+              <div className="p-3 border-b border-neutral-700 w-full text-start sticky top-0 bg-white dark:bg-neutral-800 z-50">
                 <span className='font-bold text-xl'>Notifications</span>
               </div>
               {/* content */}
@@ -105,7 +105,7 @@ const ProfileOptionsMenu = () => {
         // options tab
         (currentTab == 1)
           ? <>
-            <div className='dark:bg-neutral-900 dark:text-white'>
+            <div className='dark:bg-neutral-800 dark:text-white'>
               <div className='p-2 flex flex-col justify-center items-start gap-0.5'>
                 <div className="flex justify-start items-center gap-1">
                   <span className="text-lg font-medium block">
@@ -118,20 +118,20 @@ const ProfileOptionsMenu = () => {
                 </span>
               </div>
               <ul>
-                <li onClick={() => setCurrentTab(2)} className='cursor-pointer duration-75 p-2 hover:bg-neutral-200 w-full'>Cambiar aspecto</li>
-                <li className='cursor-pointer duration-75 p-2 hover:bg-neutral-200 w-full'>
+                <li onClick={() => setCurrentTab(2)} className='cursor-pointer duration-75 p-2 itemStyle w-full'>Cambiar aspecto</li>
+                <li className='cursor-pointer duration-75 p-2 itemStyle w-full'>
                   <Link className="w-full" href={"/settings"}>Configuración</Link>
                 </li>
-                <li className='cursor-pointer duration-75 p-2 hover:bg-neutral-200 w-full' onClick={() => signOut()}>Cerrar sesion</li>
+                <li className='cursor-pointer duration-75 p-2 itemStyle w-full' onClick={() => signOut()}>Cerrar sesion</li>
               </ul>
             </div>
           </>
           : <>
             {/* theme tab */}
             <div>
-              <div className="flex justify-start items-center gap-2">
+              <div className="flex justify-start items-center gap-2 bg-white dark:bg-neutral-800">
                 <div onClick={() => setCurrentTab(1)}>
-                  <BsArrowLeftShort className='w-9 h-9 flex justify-center items-center rounded-full hover:bg-gray-100 cursor-pointer text-sm' />
+                  <BsArrowLeftShort className='w-9 h-9 flex justify-center items-center rounded-full itemStyle cursor-pointer text-sm' />
                 </div>
                 <span className='font-medium'>Atrás</span>
               </div>
@@ -145,8 +145,8 @@ const ProfileOptionsMenu = () => {
 
 const NotificationCard: React.FC<Notification> = ({ _id, title, description, type, read, createdAt }) => {
   return (
-    <div className="relative block select-none bg-white">
-      <div className='w-full flex justify-center items-start gap-3 p-3 border-b hover:bg-gray-50'>
+    <div className="relative block select-none bg-white dark:bg-neutral-800">
+      <div className='w-full flex justify-center items-start gap-3 p-3 border-b border-neutral-700 hover:bg-gray-50 dark:hover:bg-neutral-700'>
         {/* icon */}
         <div className='w-7 h-7 flex justify-center items-center shrink-0'>
           {type === 'email' ? (
@@ -167,10 +167,10 @@ const NotificationCard: React.FC<Notification> = ({ _id, title, description, typ
         {/* options btn */}
       </div>
       <div className="absolute top-2 right-2">
-        <DropdownMenu trigger={<PiDotsThreeBold className='cursor-pointer' color='#000' size={23} />}>
+        <DropdownMenu trigger={<PiDotsThreeBold className='cursor-pointer' size={23} />}>
           <ul className='py-1'>
-            <li className='p-2 hover:bg-gray-100'>Ocultar notificación</li>
-            <li className='p-2 hover:bg-gray-100'>Reportar abuso</li>
+            <li className='p-2 itemStyle'>Ocultar notificación</li>
+            <li className='p-2 itemStyle'>Reportar abuso</li>
           </ul>
         </DropdownMenu>
       </div>
@@ -181,16 +181,16 @@ const NotificationCard: React.FC<Notification> = ({ _id, title, description, typ
 const ChangeThemeMenu = () => {
   return (
     <ThemeHandler>{(currentTheme, systemTheme, changeTheme, currentIcon) => (
-      <div className='dark:bg-neutral-900 dark:text-white'>
-        <li onClick={() => changeTheme('light')} className={`flex justify-start items-center gap-2 hover:bg-gray-100 active:brightness-95 p-2 cursor-pointer ${currentTheme == 'light' ? 'bg-gray-200' : ''}`}>
+      <div className='dark:bg-neutral-800 dark:text-white'>
+        <li onClick={() => changeTheme('light')} className={`flex justify-start items-center gap-2 itemStyle active:brightness-95 p-2 cursor-pointer ${currentTheme == 'light' ? 'bg-gray-200 dark:bg-neutral-700' : ''}`}>
           <WiDaySunny className='text-xl' />
           <span>Light</span>
         </li>
-        <li onClick={() => changeTheme('dark')} className={`flex justify-start items-center gap-2 hover:bg-gray-100 active:brightness-95 p-2 cursor-pointer ${currentTheme == 'dark' ? 'bg-gray-200' : ''}`}>
+        <li onClick={() => changeTheme('dark')} className={`flex justify-start items-center gap-2 itemStyle active:brightness-95 p-2 cursor-pointer ${currentTheme == 'dark' ? 'bg-gray-200 dark:bg-neutral-700' : ''}`}>
           <HiOutlineMoon className='text-xl' />
           <span>Dark</span>
         </li>
-        <li onClick={() => changeTheme('system')} className={`flex justify-start items-center gap-2 hover:bg-gray-100 active:brightness-95 p-2 cursor-pointer ${currentTheme == 'system' ? 'bg-gray-200' : ''}`}>
+        <li onClick={() => changeTheme('system')} className={`flex justify-start items-center gap-2 itemStyle active:brightness-95 p-2 cursor-pointer ${currentTheme == 'system' ? 'bg-gray-200 dark:bg-neutral-700' : ''}`}>
           <WiMoonAltFirstQuarter className='text-xl' />
           <span>System</span>
         </li>

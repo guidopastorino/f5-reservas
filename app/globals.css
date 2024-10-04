@@ -24,6 +24,11 @@ button>* {
   @apply p-2 border dark:border-neutral-700 outline-none hover:border-black dark:hover:border-neutral-600 focus:border-black dark:focus:border-neutral-500 focus-visible:border-black dark:focus-visible:border-neutral-700 text-base;
 }
 
+/* style for hover and active effect for light and dark mode on buttons and items on menu */
+.itemStyle {
+  @apply hover:bg-gray-100 dark:hover:bg-neutral-600 active:brightness-75
+}
+
 /* loader */
 
 .loader {

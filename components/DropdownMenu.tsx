@@ -63,7 +63,7 @@ const DropdownMenu = ({ trigger, children }: DropdownMenuProps) => {
       {menuOpen && (
         <div
           ref={menuRef}
-          className="absolute right-0 bg-white shadow-lg border rounded-md overflow-hidden z-40"
+          className="absolute right-0 shadow-lg z-40 bg-white dark:bg-neutral-800"
           style={{ top: 'calc(100% + 5px)', minWidth: '200px' }}
         >
           {children}
