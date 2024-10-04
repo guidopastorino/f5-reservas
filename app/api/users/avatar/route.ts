@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
   ctx.fillRect(0, 0, 100, 100); // Dibuja el fondo
 
   // Configurar el estilo del texto
-  ctx.font = '50px sans-serif'; // Tamaño y estilo de la fuente
+  ctx.font = '40px sans-serif'; // Tamaño y estilo de la fuente
   ctx.fillStyle = '#ffffff'; // Color del texto (blanco para contraste)
   ctx.textAlign = 'center'; // Centrar el texto horizontalmente
   ctx.textBaseline = 'middle'; // Centrar el texto verticalmente
