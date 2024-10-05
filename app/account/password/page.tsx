@@ -1,12 +1,12 @@
 "use client"
 
 import React, { useState } from "react";
-import axios from "axios";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useShowMessage } from "@/hooks/useShowMessage";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import ky from "ky";
 
 const ForgotPasswordSchema = Yup.object().shape({
   email: Yup.string().email("Correo electrónico no válido").required("El correo es obligatorio"),
@@ -25,18 +25,15 @@ const ForgotPasswordPage = () => {
     onSubmit: async (values) => {
       setLoading(true);
       try {
-        const response = await axios.post("/api/auth/password/request-password-reset", { email: values.email });
+        await ky.post("/api/auth/password/request-password-reset", { json: { email: values.email } })
         showMessage("Se ha enviado un enlace de recuperación a tu correo");
       } catch (error) {
-        console.log(error)
-        showMessage("Hubo un error, por favor intenta de nuevo");
+        showMessage(error instanceof Error ? error.message : "Hubo un error, por favor intenta de nuevo");
       } finally {
         setLoading(false);
       }
     },
   });
-
-  const { data: session } = useSession()
 
   return (
     <div>

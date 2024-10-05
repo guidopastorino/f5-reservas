@@ -2,8 +2,8 @@
 
 import useUser from '@/hooks/useUser'
 import { ReservationProps } from '@/types/types'
-import axios from 'axios'
 import React, { useState } from 'react'
+import ky from 'ky'
 import { useQuery } from 'react-query'
 
 const page = () => {
@@ -25,7 +25,6 @@ const UserReservations = ({ reservationIds }: { reservationIds: string[] }) => {
   const [reservations, setReservations] = useState<ReservationProps[]>([])
 
   const fetchUserReservations = async () => {
-    const response = await axios.get(`/api/reservations/`)
   }
 
   return (

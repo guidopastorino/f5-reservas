@@ -4,20 +4,31 @@ import { useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useDispatch } from "react-redux";
 import { setUser, clearUser } from "@/store/user/userSlice";
-import axios from "axios";
+import { UserRole } from "@/types/types";
+import ky from "ky";
+
+// Define la interfaz para los datos del usuario
+interface UserData {
+  _id: string;
+  fullname: string;
+  username: string;
+  email: string;
+  color: string;
+  role: UserRole;
+  reservations: any[];
+  createdAt: string;
+  updatedAt: string;
+}
 
 const useAuthStateListener = () => {
-  const { data: session, status } = useSession(); // Obtener sesión de NextAuth
+  const { data: session, status } = useSession();
   const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchUserData = async (userId: string) => {
       try {
-        // Realizamos un fetch a nuestra API de usuarios para obtener los datos completos
-        const response = await axios.get(`/api/users/${userId}`);
-        const userData = response.data;
+        const userData = await ky.get(`/api/users/${userId}`).json<UserData>();
 
-        // Actualizar el estado global con los datos del usuario
         dispatch(
           setUser({
             _id: userData._id,
@@ -33,7 +44,7 @@ const useAuthStateListener = () => {
         );
       } catch (error) {
         console.error("Error al obtener los datos del usuario:", error);
-        // Si ocurre un error, puedes manejarlo aquí (mostrar una alerta, por ejemplo)
+        // Manejo de errores aquí (mostrar una alerta, por ejemplo)
       }
     };
 

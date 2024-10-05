@@ -2,9 +2,17 @@
 import ProfilePicture from '@/components/ProfilePicture';
 import { useShowMessage } from '@/hooks/useShowMessage';
 import useUser from '@/hooks/useUser'
-import axios from 'axios';
+import ky from 'ky';
 import { signOut, useSession } from 'next-auth/react';
 import React, { useState } from 'react'
+
+type DeleteUserResponse = {
+  ok: boolean;
+  data?: {
+    message?: string;
+    error?: string;
+  };
+};
 
 const Page = () => {
   const user = useUser();
@@ -31,22 +39,25 @@ const Page = () => {
 
   const deleteUser = async () => {
     try {
-      setLoading(true)
-      const res = await axios.delete(`/api/users/${session?.user.id || ''}`);
+      setLoading(true);
 
-      if (res.status === 200) {
-        showMessage(res.data.message);
+      const res = await ky.delete(`/api/users/${session?.user.id || ''}`).json<DeleteUserResponse>();
+
+      if (res.ok) {
+        showMessage(res.data?.message || 'Usuario eliminado exitosamente');
         setTimeout(() => {
           signOut({ callbackUrl: '/' });
         }, 1000);
       } else {
-        showMessage(`Error eliminando usuario: ${res.data.error}`);
+        showMessage(`Error eliminando usuario: ${res.data?.error || 'Error desconocido'}`);
       }
     } catch (error) {
-      showMessage(`Error eliminando usuario: ${error}`);
+      showMessage(`Error eliminando usuario: ${error instanceof Error ? error.message : 'Error desconocido'}`);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false)
   };
+
 
   return (
     <div className="w-full border max-w-screen-lg mx-auto p-4">

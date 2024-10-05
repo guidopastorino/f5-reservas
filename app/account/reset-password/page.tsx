@@ -1,12 +1,11 @@
 "use client"
 
 import React, { useState } from "react";
-import axios from "axios";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { useRouter } from "next/router";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import ky from "ky";
 
 const ResetPasswordSchema = Yup.object().shape({
   password: Yup.string().min(6, "La contraseña debe tener al menos 6 caracteres").required("La contraseña es obligatoria"),
@@ -26,13 +25,13 @@ const ResetPasswordPage = () => {
     onSubmit: async (values) => {
       setLoading(true);
       try {
-        const response = await axios.post(`/api/auth/password/reset-password/${token}`, { password: values.password });
+        await ky.post(`/api/auth/password/reset-password/${token}`, { json: { password: values.password } });
         setMessage("Contraseña restablecida correctamente");
         // setTimeout(() => {
         //   router.push("/login");
         // }, 2000);
       } catch (error) {
-        setMessage("Error al restablecer la contraseña");
+        setMessage(error instanceof Error ? error.message : "Error al restablecer la contraseña");
       } finally {
         setLoading(false);
       }
