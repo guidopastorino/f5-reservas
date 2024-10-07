@@ -1,7 +1,7 @@
 'use client'
 
 import useUser from '@/hooks/useUser'
-import { ReservationProps } from '@/types/types'
+import { Reservation } from '@/types/types'
 import React, { useState } from 'react'
 import ky from 'ky'
 import { useQuery } from 'react-query'
@@ -22,7 +22,7 @@ const page = () => {
 export default page
 
 const UserReservations = ({ reservationIds }: { reservationIds: string[] }) => {
-  const [reservations, setReservations] = useState<ReservationProps[]>([])
+  const [reservations, setReservations] = useState<Reservation[]>([])
 
   const fetchUserReservations = async () => {
   }
@@ -37,7 +37,7 @@ const UserReservations = ({ reservationIds }: { reservationIds: string[] }) => {
 }
 
 
-const ReservationCard: React.FC<ReservationProps> = ({ }) => {
+const ReservationCard: React.FC<Reservation> = ({ }) => {
   return (
     <>
       {status}
