@@ -10,16 +10,17 @@ const UserSchema = new mongoose.Schema({
   role: {
     type: String,
     enum: ['admin', 'user'],
-    default: 'user'
+    default: 'user',
   },
-  reservations: {
-    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Reservation' }],
-    default: [] // Default to an empty array
-  },
+  reservations: [{
+    day: { type: String, required: true }, // Día de la reserva (YYYY-MM-DD)
+    hour: { type: String, required: true }, // Hora reservada
+    _id: false
+  }],
   googleId: { type: String },
 }, { timestamps: true });
 
-// Method to compare passwords
+// Método para comparar contraseñas
 UserSchema.methods.comparePassword = async function (password: string) {
   return await bcrypt.compare(password, this.password);
 };

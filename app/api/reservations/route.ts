@@ -1,41 +1,99 @@
-import { NextRequest, NextResponse } from 'next/server';
-import Reservation from '@/models/Reservation';
-import dbConnect from '@/lib/dbConnect';
-import User from '@/models/User';
+import { NextResponse } from 'next/server';
+import dbConnect from "@/lib/dbConnect";
+import Reservation from "@/models/Reservation";
 
-// Crear una nueva reserva (POST)
-export async function POST(req: NextRequest) {
+// Obtener todas las reservas
+export async function GET(req: Request) {
   try {
-    await dbConnect()
+    await dbConnect();
+    const reservations = await Reservation.find(); // Obtener todas las reservas
 
-    const { userId, reservedAt, status } = await req.json();
+    return NextResponse.json({ reservations });
+  } catch (error) {
+    return NextResponse.json({ message: "Error al obtener las reservas" }, { status: 500 });
+  }
+}
 
-    if (!userId || !reservedAt) {
-      return NextResponse.json({ message: 'userId y reservedAt son requeridos' }, { status: 400 });
+// Crear una nueva reserva para el día actual o para la fecha proporcionada
+export async function POST(req: Request) {
+  const { date } = await req.json();
+  const reservationDay = date ? new Date(date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]; // Solo el día
+  const fixedHours = ["13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"];
+
+  try {
+    await dbConnect();
+
+    // Verificar si ya existen reservas para ese día
+    const existingReservation = await Reservation.findOne({ day: reservationDay });
+
+    if (!existingReservation) {
+      // Si no existen, agregar las horas fijas
+      const schedule = fixedHours.map(hour => ({
+        hour,
+        occupied: false,
+        reservedBy: null,
+      }));
+
+      // Crear la nueva reservación
+      const newReservation = new Reservation({
+        day: reservationDay,
+        schedule,
+      });
+
+      await newReservation.save();
+      return NextResponse.json({ message: `Reservaciones agregadas para el día: ${reservationDay}` });
+    } else {
+      return NextResponse.json({ message: `Las reservaciones para el día ${reservationDay} ya existen.` });
+    }
+  } catch (error) {
+    console.error("Error al agregar reservaciones:", error);
+    return NextResponse.json({ message: "Error al agregar reservaciones" }, { status: 500 });
+  }
+}
+
+// Actualizar una reserva
+// @params: id de la reserva, y un nuevo estado u ocupación para las horas
+export async function PUT(req: Request) {
+  const { id, hour, status, reservedBy } = await req.json();
+
+  try {
+    await dbConnect();
+
+    // Buscar la reserva por ID y actualizar el horario específico
+    const reservation = await Reservation.findById(id);
+
+    if (!reservation) {
+      return NextResponse.json({ message: "Reserva no encontrada" }, { status: 404 });
     }
 
-    const user = await User.findById(userId)
+    // Buscar la hora especificada y actualizarla
+    const match = reservation.schedule.find((m: any) => m.hour === hour);
 
-    if (!user) return NextResponse.json({ message: "Usuario no encontrado" }, { status: 404 })
+    if (!match) {
+      return NextResponse.json({ message: "Horario no encontrado" }, { status: 404 });
+    }
 
-    // Crear la nueva reserva
-    const newReservation = new Reservation({
-      userId,
-      reservedAt: new Date(reservedAt), // Fecha (dia y hora totales) que el usuario tiene reservadas
-      status: status || 'pending', // Estado predeterminado 'pending' si no se pasa ningún estado
-    });
+    // Actualizar el estado y quién reservó, si es necesario
+    if (status) match.status = status;
+    if (reservedBy) match.reservedBy = reservedBy;
 
-    // Agregar el id de la reserva en el array de reservas del usuario
-    user.reservations.push(newReservation._id)
-
-    await user.save()
-
-    // Guardar en la base de datos
-    const savedReservation = await newReservation.save();
-
-    return NextResponse.json(savedReservation, { status: 201 });
+    await reservation.save();
+    return NextResponse.json({ message: "Reserva actualizada exitosamente" });
   } catch (error) {
-    console.error(error);
-    return NextResponse.json({ message: 'Error al crear la reserva' }, { status: 500 });
+    console.error("Error al actualizar la reserva:", error);
+    return NextResponse.json({ message: "Error al actualizar la reserva" }, { status: 500 });
+  }
+}
+
+// Eliminar todas las reservas
+export async function DELETE(req: Request) {
+  try {
+    await dbConnect();
+    await Reservation.deleteMany(); // Eliminar todas las reservas
+
+    return NextResponse.json({ message: "Todas las reservas han sido eliminadas." });
+  } catch (error) {
+    console.error("Error al eliminar las reservas:", error);
+    return NextResponse.json({ message: "Error al eliminar las reservas" }, { status: 500 });
   }
 }

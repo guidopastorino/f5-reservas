@@ -1,5 +1,6 @@
 Ahora vamos con la parte de las reservas.
 
+// metodo 1
 ¿como quiero que funcione?
 - Quisiera que haya un calendario, en el cual, obviamente, las fechas que ya pasaron (dias anteriores) aparezcan como "no disponibles" o tachados, cosa que el usuario no pueda reservar en esas fechas.
 - quiero que los periodos de reservas se realicen desde: el dia que hace la reserva hasta el mes siguiente. es decir, cada dia cambiara pero el periodo siempre es de 1 mes.
@@ -8,3 +9,35 @@ esos serán los periodos de reservas
   - como dije antes, habrá un calendario, en donde el usuario podrá elegir la fecha y abajo las horas que quiere jugar (como máximo son 3 horas) y luego le aparece lo que debe pagar, una vez que paga ya se hizo la reserva.
   - el usuario que haga la reserva se le almacenará el id de la reserva que hizo en su cuenta, y en los documentos de "Reservations" se almacenarán los detalles de las reservas (la cual se guiará de algo clave, y es que, luego de que pase el dia y hora de reserva, se elimina directamente de la bd, es decir, si yo el 1 de octubre reservo 2 horas (de 16 a 18), entonces, el 1 de octubre a las 18 hs se removerá la reserva, ya que se entenderá como "expirada", eso lo manejaré con TTL Indexes, sino algo parecido)
   - tambien usaré metodos de pagos en mi app, es decir, que el usuario, al hacer la reserva, debe pagar la cantidad. (al ser siempre 10 jugadores, cada uno paga $2000 ARS, es decir, una hora saldrá $20000). pero hay una cosa, si el usuario quiere cancelar la reserva, debe hacerlo antes de 2 hs a que comience su partido (hora que reservó). Siempre tendrá el derecho de cancelar, y si lo hace, la reserva se elimina del documento Reservations, de su array "reservations" y se le devuelve el monto pagado al usuario y ese horario quedara libre ya que se canceló.
+
+
+
+
+
+______
+
+// metodo 2
+
+Las reservas se pueden realizar solamente entre 1 semana como maximo de dias de calendario.
+al seleccionar el dia, aparecerán los horarios disponibles que hay para poder jugar 1 hora en ese dia.
+  - Las reservas en la bd aparecerán todas por la fecha en la que se puede reservar.
+    - se eliminarán
+  - se harán fetch de los horarios al seleccionar el dia
+  - los horarios tendrán el siguiente tipo
+    type MatchHour = {
+      hour: string;
+      occupied: boolean;
+    }
+  - si están ocupados aparecen deshabilitados, sino, aparecen habilitados.
+  - al apretar un horario disponible, aparecen los detalles de:
+    - fecha y hora que se jugará (de que hora hasta que hora)
+    - total a pagar
+  - luego abajo abrá un botón que dice continuar con el pago.
+  - en la página de pago aparecerá detalladamente la siguiente alerta:
+    - "Una vez hecha la reserva, se podrá cancelar el pago en un maximo de 2 horas de antelación al horario de juego. Caso contrario, se cobrará el monto de todas formas y el horario quedará libre de uso."
+  - se detallarán detalles de pago, como el total a pagar ($2000 por jugador, lo que sería $20000 la hora)
+  - Luego confirma datos de pago (ya sea con stripe o mercado pago). En este proceso no se paga todavía. Se paga luego.
+  - La reserva quedará pendiente. (es decir, no fue cancelada ni fueron a jugar todavia)
+    - Al llegar al maximo de 2 horas de antelacion, si el usuario no canceló la reserva, entonces se cobrará el monto (el estado será done o paid)
+    - Si cancela la reserva, el estado 'occupied' pasa a false y se elimina el id de reserva del array 'reservations' del usuario. Luego, se le devuelve el dinero al usuario (dinero de la reserva)
+  - Al pasar la hora de juego, la reserva se eliminará automaticamente de la base de datos, con un TTL indexes

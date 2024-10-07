@@ -1,13 +1,21 @@
 export type UserRole = 'admin' | 'user';
 
-// reservation
-export interface ReservationProps {
-  userId: string;       // ID del usuario que hace la reserva
-  selectedDate: Date;   // Fecha de la reserva
-  startTime: string;    // Hora de inicio
-  endTime: string;      // Hora de fin
-  totalHours: number;   // Total de horas reservadas
-  totalAmount: number;  // Monto total a pagar
+export type ReservationStatus = 'available' | 'pending' | 'canceled' | 'confirmed'
+
+// Reserva que hará un usuario
+export interface Schedule {
+  hour: string;
+  occupied: boolean;
+  status: ReservationStatus;
+  reservedBy: string; // user id 
+}
+
+export interface Reservation {
+  _id: string;
+  day: string;
+  schedule: Schedule[];
+  createdAt: string;
+  __v: number;
 }
 
 // notification
