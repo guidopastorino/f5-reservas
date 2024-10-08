@@ -1,18 +1,6 @@
 // features/userSlice.ts
-import { UserRole } from "@/types/types";
+import { UserRole, UserState } from "@/types/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
-interface UserState {
-  _id: string | null;
-  fullname: string | null;
-  username: string | null;
-  email: string | null;
-  color: string | null;
-  role: UserRole | null;
-  reservations: string[];
-  createdAt: string | null;
-  updatedAt: string | null;
-}
 
 const initialState: UserState = {
   _id: null,

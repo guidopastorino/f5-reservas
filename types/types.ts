@@ -1,3 +1,20 @@
+// user type
+
+export interface UserState {
+  _id: string | null;
+  fullname: string | null;
+  username: string | null;
+  email: string | null;
+  color: string | null;
+  role: UserRole | null;
+  reservations: string[];
+  createdAt: string | null;
+  updatedAt: string | null;
+}
+
+// 
+
+
 export type UserRole = 'admin' | 'user';
 
 export type ReservationStatus = 'available' | 'pending' | 'canceled' | 'confirmed'

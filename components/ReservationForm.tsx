@@ -33,13 +33,14 @@ function ReservationForm() {
   };
 
   // Hook de React Query que se ejecuta cuando `selectedDate` cambia
-  const { data: reservation, error, isLoading } = useQuery<Reservation>(
+  const { data: reservation, error, isLoading, refetch } = useQuery<Reservation>(
     ['reservation', selectedDate],
     () => fetchReservation(selectedDate?.toISOString().split('T')[0] || ""),
     {
       enabled: !!selectedDate, // Solo si hay fecha seleccionada
-      staleTime: 5 * 60 * 1000, // Cache de 5 minutos para evitar llamadas frecuentes
-      retry: false, // Desactiva los reintentos automáticos en caso de error
+      staleTime: 5 * 60 * 1000, // Cache de 5 minutos
+      cacheTime: 10 * 60 * 1000, // Cache por 10 minutos después de no usarlo
+      retry: 2, // Reintentar solo 2 veces en caso de error
       refetchOnWindowFocus: false, // Evita refetch al volver a la ventana
     }
   );
@@ -48,6 +49,7 @@ function ReservationForm() {
     setSelectedDate(date);
     setSelectedHour(""); // Reinicia la hora seleccionada
     setTotalAmount(0);    // Reinicia el monto total a pagar
+    refetch()
   };
 
   const handleHourClick = (hour: string, isOccupied: boolean) => {
