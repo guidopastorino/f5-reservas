@@ -34,7 +34,9 @@ function PaymentPage() {
           userId: session.user.id
         },
       }).json();
-  
+
+      // invalidar query ['userReservations', session?.user?.id]
+      
       console.log("Reserva realizada:", response);
 
       // manejar el pago

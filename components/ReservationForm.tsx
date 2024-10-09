@@ -8,9 +8,6 @@ import { useQuery } from 'react-query';
 import ky from 'ky';
 import { Reservation, Schedule } from '@/types/types';
 
-// Definir la interfaz de la respuesta
-
-
 function ReservationForm() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedHour, setSelectedHour] = useState<string>("");
@@ -26,6 +23,7 @@ function ReservationForm() {
   const fetchReservation = async (date: string): Promise<Reservation> => {
     try {
       const reservation = await ky.get(`/api/reservations/${date}`).json();
+      console.log("reservation: ", reservation)
       return reservation as Reservation;
     } catch (error) {
       throw new Error('No se encontró la reserva.');
@@ -38,9 +36,10 @@ function ReservationForm() {
     () => fetchReservation(selectedDate?.toISOString().split('T')[0] || ""),
     {
       enabled: !!selectedDate, // Solo si hay fecha seleccionada
-      staleTime: 5 * 60 * 1000, // Cache de 5 minutos para evitar llamadas frecuentes
       retry: false, // Desactiva los reintentos automáticos en caso de error
-      refetchOnWindowFocus: false, // Evita refetch al volver a la ventana
+      staleTime: 0, // No cachear los datos para que siempre se vuelva a consultar
+      refetchOnWindowFocus: true, // Refetch cada vez que la ventana obtiene el foco
+      cacheTime: 0, // No guardar cache entre visitas para asegurarte de que siempre está actualizado
     }
   );
 

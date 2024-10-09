@@ -33,12 +33,10 @@ const Page = () => {
     ['userReservations', session?.user?.id],
     fetchUserReservations,
     {
-      enabled: !!session?.user?.id, // Solo ejecuta la consulta si hay un userId
-      staleTime: 5 * 60 * 1000, // Cache de 5 minutos
-      cacheTime: 10 * 60 * 1000, // Cache durante 10 minutos después de no usarlo
-      retry: 2, // Reintentar 2 veces en caso de error
-      refetchOnWindowFocus: false, // No hacer refetch cuando se vuelve a la ventana
-      onSuccess: (data) => console.log(data)
+      enabled: !!session?.user?.id,
+      staleTime: 0, // No cachear los datos para que siempre se vuelva a consultar
+      refetchOnWindowFocus: true, // Refetch cada vez que la ventana obtiene el foco
+      cacheTime: 0, // No guardar cache entre visitas para asegurarte de que siempre está actualizado
     }
   );
 
