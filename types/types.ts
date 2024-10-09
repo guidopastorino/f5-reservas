@@ -7,7 +7,6 @@ export interface UserState {
   email: string | null;
   color: string | null;
   role: UserRole | null;
-  reservations: string[];
   createdAt: string | null;
   updatedAt: string | null;
 }

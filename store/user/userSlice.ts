@@ -9,7 +9,6 @@ const initialState: UserState = {
   email: null,
   color: null,
   role: null,
-  reservations: [],
   createdAt: null,
   updatedAt: null,
 };
@@ -25,7 +24,6 @@ const userSlice = createSlice({
       state.email = action.payload.email;
       state.color = action.payload.color;
       state.role = action.payload.role;
-      state.reservations = action.payload.reservations;
       state.createdAt = action.payload.createdAt;
       state.updatedAt = action.payload.updatedAt;
     },
@@ -36,7 +34,6 @@ const userSlice = createSlice({
       state.email = null;
       state.color = null;
       state.role = null;
-      state.reservations = [];
       state.createdAt = null;
       state.updatedAt = null;
     },

@@ -38,9 +38,8 @@ function ReservationForm() {
     () => fetchReservation(selectedDate?.toISOString().split('T')[0] || ""),
     {
       enabled: !!selectedDate, // Solo si hay fecha seleccionada
-      staleTime: 5 * 60 * 1000, // Cache de 5 minutos
-      cacheTime: 10 * 60 * 1000, // Cache por 10 minutos después de no usarlo
-      retry: 2, // Reintentar solo 2 veces en caso de error
+      staleTime: 5 * 60 * 1000, // Cache de 5 minutos para evitar llamadas frecuentes
+      retry: false, // Desactiva los reintentos automáticos en caso de error
       refetchOnWindowFocus: false, // Evita refetch al volver a la ventana
     }
   );
@@ -84,22 +83,25 @@ function ReservationForm() {
 
       <div className="form-group mb-4">
         <label htmlFor="hour" className="text-gray-700 dark:text-white">Selecciona una hora:</label>
+
         {isLoading ? (
           <div className='w-full p-4 flex justify-center items-center'>
             <span className='buttonLoader'></span>
           </div>
         ) : error ? (
-          <p className="text-red-500">{error instanceof Error ? error.message : "No se han encontrado datos de reserva para esta fecha"}</p>
-        ) : reservation ? (
+          <p className="text-red-500">
+            {error instanceof Error ? error.message : "No se han encontrado datos de reserva para esta fecha"}
+          </p>
+        ) : reservation && reservation.schedule ? (
           <div className="hours-grid grid grid-cols-4 gap-2 mt-4">
             {reservation.schedule.map((slot: Schedule, index: number) => (
               <button
                 key={index}
                 className={`hour-button p-3 text-center rounded-lg font-semibold transition-all ${slot.occupied
-                  ? 'bg-red-500 text-white cursor-not-allowed'
-                  : selectedHour === slot.hour
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-100 hover:bg-gray-300 dark:bg-neutral-700 dark:hover:bg-neutral-600 dark:text-white'
+                    ? 'bg-red-500 text-white cursor-not-allowed'
+                    : selectedHour === slot.hour
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-gray-100 hover:bg-gray-300 dark:bg-neutral-700 dark:hover:bg-neutral-600 dark:text-white'
                   }`}
                 onClick={() => handleHourClick(slot.hour, slot.occupied)}
                 disabled={slot.occupied}
@@ -109,9 +111,12 @@ function ReservationForm() {
             ))}
           </div>
         ) : (
-          <p className="text-gray-500 dark:text-gray-300">No hay horarios disponibles.</p>
+          <p className="text-gray-500 dark:text-gray-300">
+            No hay horarios disponibles.
+          </p>
         )}
       </div>
+
 
       <p className="text-lg font-bold mt-4 dark:text-white">Total a pagar: ${totalAmount}</p>
 

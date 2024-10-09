@@ -11,7 +11,7 @@ function isValidDate(dateString: string) {
   return !isNaN(date.getTime()); // Devuelve `true` si es una fecha válida
 }
 
-// Obtiene los datos de una reserva (a través de su _id o 'date')
+// Obtiene los datos de una reserva (a través de su '_id' o 'day')
 export async function GET(
   req: Request,
   { params }: { params: { id: string } }
@@ -31,7 +31,10 @@ export async function GET(
     }
 
     if (!reservation) {
-      return NextResponse.json({ message: "No se encontró la reserva." }, { status: 404 });
+      return NextResponse.json({ 
+        message: "No se encontró la reserva.", 
+        reservation: null 
+      }, { status: 404 });
     }
 
     return NextResponse.json(reservation);

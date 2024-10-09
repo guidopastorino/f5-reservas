@@ -16,11 +16,22 @@ export async function GET(req: Request) {
 
 // Crear una nueva reserva para el día actual o para la fecha proporcionada
 export async function POST(req: Request) {
-  const { date } = await req.json();
-  const reservationDay = date ? new Date(date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]; // Solo el día
+  let reservationDay: string;
   const fixedHours = ["13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"];
 
   try {
+    // Verificar si hay cuerpo en la solicitud
+    const body = await req.text(); // Usa req.text() en lugar de req.json() para evitar errores con cuerpo vacío
+
+    if (body) {
+      // Si hay un cuerpo, intenta parsear el JSON
+      const { date } = JSON.parse(body);
+      reservationDay = date ? new Date(date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]; // Solo el día
+    } else {
+      // Si no hay cuerpo, usa la fecha actual
+      reservationDay = new Date().toISOString().split('T')[0]; // Solo el día
+    }
+
     await dbConnect();
 
     // Verificar si ya existen reservas para ese día
@@ -50,6 +61,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ message: "Error al agregar reservaciones" }, { status: 500 });
   }
 }
+
 
 // Actualizar una reserva
 // @params: id de la reserva, y un nuevo estado u ocupación para las horas

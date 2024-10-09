@@ -4,21 +4,8 @@ import { useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useDispatch } from "react-redux";
 import { setUser, clearUser } from "@/store/user/userSlice";
-import { UserRole } from "@/types/types";
+import { UserState } from "@/types/types";
 import ky from "ky";
-
-// Define la interfaz para los datos del usuario
-interface UserData {
-  _id: string;
-  fullname: string;
-  username: string;
-  email: string;
-  color: string;
-  role: UserRole;
-  reservations: any[];
-  createdAt: string;
-  updatedAt: string;
-}
 
 const useAuthStateListener = () => {
   const { data: session, status } = useSession();
@@ -27,7 +14,7 @@ const useAuthStateListener = () => {
   useEffect(() => {
     const fetchUserData = async (userId: string) => {
       try {
-        const userData = await ky.get(`/api/users/${userId}`).json<UserData>();
+        const userData = await ky.get(`/api/users/${userId}`).json<UserState>();
 
         dispatch(
           setUser({
@@ -37,7 +24,6 @@ const useAuthStateListener = () => {
             email: userData.email,
             color: userData.color,
             role: userData.role,
-            reservations: userData.reservations,
             createdAt: userData.createdAt,
             updatedAt: userData.updatedAt,
           })
