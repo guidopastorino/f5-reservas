@@ -12,7 +12,7 @@ type UserRole = 'admin' | 'user';
 
 const validationSchema = Yup.object().shape({
   from: Yup.string().email("Correo electrónico no válido").required("El campo 'De' es obligatorio"),
-  destinarios: Yup.string().required("El campo 'Destinario/s' es obligatorio").email("El email no es válido"),
+  // destinarios: Yup.string().required("El campo 'Destinario/s' es obligatorio").email("El email no es válido"),
   asunto: Yup.string().required("El campo 'Asunto' es obligatorio"),
   contenido: Yup.string().required("El campo 'Contenido' es obligatorio"),
 });

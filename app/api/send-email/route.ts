@@ -15,6 +15,7 @@ export async function POST(req: NextRequest) {
   if (!destinarios) {
     const users = await User.find({}); // Usar el modelo User para obtener los usuarios
     emails = users.map((user: { email: string }) => user.email); // Mapear los correos electrónicos
+    console.log(emails)
   } else {
     emails = [destinarios]; // Si hay un destinatario específico, lo agregamos
   }

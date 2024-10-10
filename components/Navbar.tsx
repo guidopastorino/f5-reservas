@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import DropdownMenu from './DropdownMenu'
 import { signOut } from 'next-auth/react'
@@ -14,7 +14,7 @@ import { MdVerified } from "react-icons/md";
 import { MdOutlineEmail } from "react-icons/md";
 import { MdOutlinePersonOutline } from "react-icons/md";
 import { BsCalendarCheck } from "react-icons/bs";
-import { NavLinkProps, Notification } from '@/types/types'
+import { NavLinkProps, NotificationProps } from '@/types/types'
 import { PiDotsThreeBold } from "react-icons/pi";
 // theme
 import { WiMoonAltFirstQuarter } from "react-icons/wi";
@@ -55,17 +55,17 @@ const Navbar = () => {
           >
             <div className='flex flex-col justify-start items-start gap-0.5 w-80 max-h-96 h-[70vh] overflow-auto'>
               <div className="p-3 border-b border-neutral-700 w-full text-start sticky top-0 bg-white dark:bg-neutral-800 z-50">
-                <span className='font-bold text-xl'>Notifications</span>
+                <span className='font-bold text-xl'>Notificaciones</span>
               </div>
               {/* content */}
               <div>
-                <NotificationCard _id={''} title={'Reserva hecha'} description={'Hola, Guido! La reserva se ha efectuado exitosamente!'} type={'account'} read={false} />
-                <NotificationCard _id={''} title={'Reserva hecha'} description={'Hola, Guido! La reserva se ha efectuado exitosamente!'} type={'reservation'} read={false} />
-                <NotificationCard _id={''} title={'Reserva hecha'} description={'Hola, Guido! La reserva se ha efectuado exitosamente!'} type={'email'} read={false} />
-                <NotificationCard _id={''} title={'Reserva hecha'} description={'Hola, Guido! La reserva se ha efectuado exitosamente!'} read={false} />
-                <NotificationCard _id={''} title={'Reserva hecha'} description={'Hola, Guido! La reserva se ha efectuado exitosamente!'} read={false} />
-                <NotificationCard _id={''} title={'Reserva hecha'} description={'Hola, Guido! La reserva se ha efectuado exitosamente!'} type={'reservation'} read={false} />
-                <NotificationCard _id={''} title={'Reserva hecha'} description={'Hola, Guido! La reserva se ha efectuado exitosamente!'} type={'reservation'} read={false} />
+                <NotificationCard _id={''} title={'Reserva hecha'} message={'Hola, Guido! La reserva se ha efectuado exitosamente!'} type={'account'} seen={false} />
+                <NotificationCard _id={''} title={'Reserva hecha'} message={'Hola, Guido! La reserva se ha efectuado exitosamente!'} type={'reservation'} seen={false} />
+                <NotificationCard _id={''} title={'Reserva hecha'} message={'Hola, Guido! La reserva se ha efectuado exitosamente!'} type={'email'} seen={true} />
+                <NotificationCard _id={''} title={'Reserva hecha'} message={'Hola, Guido! La reserva se ha efectuado exitosamente!'} seen={true} />
+                <NotificationCard _id={''} title={'Reserva hecha'} message={'Hola, Guido! La reserva se ha efectuado exitosamente!'} seen={true} />
+                <NotificationCard _id={''} title={'Reserva hecha'} message={'Hola, Guido! La reserva se ha efectuado exitosamente!'} type={'reservation'} seen={true} />
+                <NotificationCard _id={''} title={'Reserva hecha'} message={'Hola, Guido! La reserva se ha efectuado exitosamente!'} type={'reservation'} seen={true} />
               </div>
             </div>
           </DropdownMenu>
@@ -143,9 +143,20 @@ const ProfileOptionsMenu = () => {
   )
 }
 
-const NotificationCard: React.FC<Notification> = ({ _id, title, description, type, read, createdAt }) => {
+const NotificationCard: React.FC<NotificationProps> = ({ _id, title, message, type, seen }) => {
+  const [isNew, setIsNew] = useState(!seen);
+  const [background, setBackground] = useState(isNew ? 'bg-blue-200 dark:bg-blue-100' : 'bg-transparent');
+
+  useEffect(() => {
+    if (isNew) {
+      setTimeout(() => {
+        setBackground('bg-transparent');
+      }, 500);
+    }
+  }, [isNew]);
+
   return (
-    <div className="relative block select-none bg-white dark:bg-neutral-800">
+    <div className={`relative block select-none transition-all duration-1000 ${background} dark:bg-neutral-800`}>
       <div className='w-full flex justify-center items-start gap-3 p-3 border-b border-neutral-700 hover:bg-gray-50 dark:hover:bg-neutral-700'>
         {/* icon */}
         <div className='w-7 h-7 flex justify-center items-center shrink-0'>
@@ -162,10 +173,10 @@ const NotificationCard: React.FC<Notification> = ({ _id, title, description, typ
         {/* content */}
         <div className="flex flex-col justify-start items-start">
           <span className='font-bold text-lg'>{title}</span>
-          <span>{description}</span>
+          <span>{message}</span>
         </div>
-        {/* options btn */}
       </div>
+      {/* Dropdown options */}
       <div className="absolute top-2 right-2">
         <DropdownMenu trigger={<PiDotsThreeBold className='cursor-pointer' size={23} />}>
           <ul className='py-1'>

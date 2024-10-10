@@ -45,10 +45,14 @@ export async function POST(req: Request) {
         reservedBy: null,
       }));
 
-      // Crear la nueva reservación
+      // Calcular la fecha de expiración (1 día después del día de la reserva)
+      const expirationDate = new Date(new Date(reservationDay).getTime() + 24 * 60 * 60 * 1000);
+
+      // Crear la nueva reservación con el campo expirationDate
       const newReservation = new Reservation({
         day: reservationDay,
         schedule,
+        expirationDate,  // Asignar la fecha de expiración
       });
 
       await newReservation.save();
@@ -61,6 +65,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ message: "Error al agregar reservaciones" }, { status: 500 });
   }
 }
+
 
 
 // Actualizar una reserva

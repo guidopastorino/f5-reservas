@@ -4,6 +4,7 @@ import dbConnect from "@/lib/dbConnect";
 import Reservation from "@/models/Reservation";
 import { Schedule } from "@/types/types";
 import User from "@/models/User";
+import { sendEmail } from "@/utils/emailService";
 
 // Verifica si el string es una fecha válida
 function isValidDate(dateString: string) {
@@ -31,9 +32,9 @@ export async function GET(
     }
 
     if (!reservation) {
-      return NextResponse.json({ 
-        message: "No se encontró la reserva.", 
-        reservation: null 
+      return NextResponse.json({
+        message: "No se encontró la reserva.",
+        reservation: null
       }, { status: 404 });
     }
 
@@ -95,6 +96,31 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
 
     user.reservations.push({ day: params.id, hour });
     await user.save();
+
+    // Enviar email
+    const htmlContent = `
+<div style="text-align: center;">
+  <img src="https://static.vecteezy.com/system/resources/thumbnails/013/366/674/small_2x/foot-ball-or-soccer-ball-icon-symbol-for-art-illustration-logo-website-apps-pictogram-news-infographic-or-graphic-design-element-format-png.png" 
+        alt="Icono de fútbol" 
+        style="width: 100px; height: auto; margin-bottom: 20px;"/>
+  <h2>Hola, ${user.fullname || 'Usuario'}!</h2>
+  <p>La reserva se ha efectuado exitosamente.</p>
+  <p>Puedes consultar los detalles a través del siguiente link: 
+    <a href="${process.env.NEXTAUTH_URL}/reservations/4af211f9-263d-43d4-8d41-be148b2e67fa">
+      Consultar detalles reserva
+    </a>
+  </p>
+  <p>Saludos,</p>
+  <p>Equipo de F5 Reservas Fighiera</p>
+</div>
+`;
+
+    try {
+      await sendEmail(process.env.ACCOUNT_APP_EMAIL || "", [user.email], "Reserva hecha exitosamente", { html: htmlContent });
+      console.log('Correo de confirmación enviado exitosamente.');
+    } catch (error) {
+      console.error('Error al enviar el correo de confirmación:', error);
+    }
 
     return NextResponse.json({ message: 'Reserva realizada con éxito.' });
   } catch (error) {

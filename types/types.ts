@@ -36,15 +36,16 @@ export interface Reservation {
 
 // notification
 
-type NotificationType = 'email' | 'reservation' | 'account'
+export type NotificationType = 'email' | 'reservation' | 'account'
 
-export type Notification = {
+export type NotificationProps = {
   _id: string;
   type?: NotificationType; // defines the icon
   title: string;
-  description: string;
-  read: boolean; // false by default
+  message: string;
+  seen: boolean; // false by default
   createdAt?: Date;
+  updatedAt?: Date;
 }
 
 // navbar
