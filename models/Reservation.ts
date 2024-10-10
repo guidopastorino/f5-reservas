@@ -27,9 +27,12 @@ ReservationSchema.pre('save', function (next: (err?: CallbackError) => void) {
       return next(new Error('El campo `day` debe ser una fecha válida.') as CallbackError);
     }
 
-    // Establecer la fecha de expiración (1 día después de la fecha `day`)
-    const expirationTimeInSeconds = 86400; // 1 día en segundos
-    this.expirationDate = new Date(reservationDay.getTime() + expirationTimeInSeconds * 1000);
+    // Configurar la fecha de expiración a las 00:00 del día siguiente
+    const expirationDate = new Date(reservationDay);
+    expirationDate.setDate(expirationDate.getDate() + 1); // Ir al día siguiente
+    expirationDate.setHours(23, 59, 0, 0); // Expira el mismo dia que 'day' (YYYY-MM-DD) pero a las 23:59
+
+    this.expirationDate = expirationDate;
 
     next();
   } catch (error) {
@@ -37,7 +40,7 @@ ReservationSchema.pre('save', function (next: (err?: CallbackError) => void) {
   }
 });
 
-// Index TTL para eliminar automáticamente la reserva un día después de su fecha 'day'
+// Index TTL para eliminar automáticamente la reserva en la fecha `expirationDate`
 ReservationSchema.index({ expirationDate: 1 }, { expireAfterSeconds: 0 });
 
 // Modelo de Mongoose

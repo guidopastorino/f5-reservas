@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import { SessionProvider } from "next-auth/react";
 import { Provider } from "react-redux";
 import { store } from "@/store/index";
@@ -8,7 +8,6 @@ import useAuthStateListener from "@/hooks/useAuthStateListener";
 import { QueryClient, QueryClientProvider } from "react-query";
 import Next13ProgressBar from 'next13-progressbar'
 import { ThemeProvider } from "next-themes";
-import { AnimatePresence, motion } from 'framer-motion';
 
 const queryClient = new QueryClient();
 

@@ -17,6 +17,10 @@ const UserSchema = new mongoose.Schema({
     hour: { type: String, required: true }, // Hora reservada
     _id: false
   }],
+  notifications: [{
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Notification', // Referencia al modelo 'Notification'
+  }],
   googleId: { type: String },
 }, { timestamps: true });
 

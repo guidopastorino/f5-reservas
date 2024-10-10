@@ -24,6 +24,7 @@ const Page = () => {
       const reservations = await ky.get(`/api/users/${session?.user?.id}/reservations`).json();
       return reservations as UserReservation[];
     } catch (error) {
+      console.log(error)
       throw new Error('No se encontraron reservas para el usuario.');
     }
   };
