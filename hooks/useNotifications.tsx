@@ -39,7 +39,7 @@ const useNotifications = () => {
     }
   );
 
-  return { notifications, error, isLoading, unreadNotifications, totalNotifications };
+  return { notifications, error, isLoading, unreadNotifications, totalNotifications, session };
 };
 
 export default useNotifications;

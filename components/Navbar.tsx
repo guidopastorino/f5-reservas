@@ -4,7 +4,7 @@ import Link from 'next/link'
 import React, { useState } from 'react'
 import { usePathname } from 'next/navigation'
 import DropdownMenu from './DropdownMenu'
-import { signOut } from 'next-auth/react'
+import { signOut, useSession } from 'next-auth/react'
 import { IoMdFootball } from "react-icons/io";
 import useUser from '@/hooks/useUser'
 import { MdVerified } from "react-icons/md";
@@ -18,6 +18,7 @@ import ProfilePicture from './ProfilePicture'
 import useNotifications from '@/hooks/useNotifications'
 import NotificationList from './notification/NotificationList'
 import { BiBell } from 'react-icons/bi'
+import Skeleton from './Skeleton'
 
 const Navbar = () => {
   const links: NavLinkProps[] = [
@@ -68,18 +69,20 @@ const NavLink: React.FC<NavLinkProps> = ({ title, route }) => {
 
 // NotificationsMenu dropdown
 const NotificationsMenu = () => {
-  const { notifications, isLoading, error, unreadNotifications } = useNotifications();
+  const { notifications, isLoading, error, unreadNotifications, totalNotifications, session } = useNotifications();
+
+  if (!session?.user.id) return <Skeleton />
 
   return (
     <DropdownMenu trigger={
       <button className="w-10 h-10 flex justify-center items-center rounded-full relative border">
         <BiBell />
         {unreadNotifications > 0 && (
-          <span className="text-sm font-bold w-5 h-5 bg-blue-500 text-white rounded-full z-50 absolute top-0 right-0">{unreadNotifications}</span>
+          <span className="text-[12px] flex justify-center items-center font-bold w-5 h-5 bg-blue-500 text-white rounded-full z-50 absolute -top-1 -right-1">{unreadNotifications > 9 ? '+9' : unreadNotifications}</span>
         )}
       </button>
     }>
-      <div className="w-96 max-h-[400px] overflow-auto">
+      <div className="w-96 max-h-[400px] h-[70vh] overflow-auto">
         {isLoading && <p>Cargando...</p>}
         {error && <p>Error al cargar: {error.message}</p>}
         {notifications && (
@@ -94,6 +97,8 @@ const ProfileOptionsMenu = () => {
   const user = useUser()
 
   const [currentTab, setCurrentTab] = useState<number>(1)
+
+  if (!user || !user._id) return <Skeleton />
 
   return (
     <DropdownMenu

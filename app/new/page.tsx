@@ -1,5 +1,10 @@
 import ReservationForm from '@/components/ReservationForm'
+import { Metadata } from 'next';
 import React from 'react'
+
+export const metadata: Metadata = {
+  title: "Nueva reserva"
+};
 
 const page = () => {
   return (

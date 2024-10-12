@@ -1,5 +1,10 @@
+import { Metadata } from 'next';
 import Link from 'next/link';
 import React from 'react';
+
+export const metadata: Metadata = {
+  title: "Política de privacidad"
+}
 
 const page = () => {
   const lastUpdated: number = 1726421118251; // timestamp con la información de la última vez modificado

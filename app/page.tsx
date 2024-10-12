@@ -1,3 +1,4 @@
+import Skeleton from '@/components/Skeleton';
 import Link from 'next/link';
 import React from 'react'
 
