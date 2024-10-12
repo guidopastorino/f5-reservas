@@ -5,6 +5,7 @@ import Reservation from "@/models/Reservation";
 import { Schedule } from "@/types/types";
 import User from "@/models/User";
 import { sendEmail } from "@/utils/emailService";
+import Notification from "@/models/Notification";
 
 // Verifica si el string es una fecha válida
 function isValidDate(dateString: string) {
@@ -53,13 +54,17 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
 
     const { hour, userId } = await req.json();
 
-    console.log("data: ", { hour, userId })
-
     if (!hour || !userId) {
       return NextResponse.json({ message: 'Datos incompletos: faltan hora o ID de usuario.' }, { status: 400 });
     }
 
-    const reservation = await Reservation.findOne({ day: params.id });
+    // Validar formato de hora
+    const isValidHour = /^([0-1]\d|2[0-3]):([0-5]\d)$/.test(hour);
+    if (!isValidHour) {
+      return NextResponse.json({ message: 'Hora no válida.' }, { status: 400 });
+    }
+
+    const reservation = await Reservation.findOne({ day: params.id }).catch(() => null);
     if (!reservation) {
       return NextResponse.json({ message: 'Reserva no encontrada.' }, { status: 404 });
     }
@@ -70,6 +75,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     const reservationTime = new Date(reservationDay);
     reservationTime.setHours(hourPart, minutePart, 0, 0);
 
+    // Verificar si la hora ya pasó (si es el mismo día)
     if (reservationDay.toDateString() === today.toDateString() && reservationTime < today) {
       return NextResponse.json({ message: 'La hora ya ha expirado.' }, { status: 400 });
     }
@@ -83,6 +89,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
       return NextResponse.json({ message: 'Horario ya está reservado.' }, { status: 400 });
     }
 
+    // Actualizar horario reservado
     matchHour.occupied = true;
     matchHour.status = 'pending';
     matchHour.reservedBy = userId;
@@ -95,7 +102,18 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     }
 
     user.reservations.push({ day: params.id, hour });
+
+    // Crear notificación
+    const notification = new Notification({
+      type: "reservation",
+      title: "Reserva hecha exitosamente",
+      message: `La reserva para el día ${params.id} y hora ${hour} se ha efectuado exitosamente. Puedes consultar tu correo para más información.`
+    });
+
+    user.notifications.push(notification._id);
+
     await user.save();
+    await notification.save();
 
     // Enviar email
     const htmlContent = `
@@ -106,7 +124,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
   <h2>Hola, ${user.fullname || 'Usuario'}!</h2>
   <p>La reserva se ha efectuado exitosamente.</p>
   <p>Puedes consultar los detalles a través del siguiente link: 
-    <a href="${process.env.NEXTAUTH_URL}/reservations/4af211f9-263d-43d4-8d41-be148b2e67fa">
+    <a href="${process.env.NEXTAUTH_URL}/reservations/${reservation._id}">
       Consultar detalles reserva
     </a>
   </p>

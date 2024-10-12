@@ -1,28 +1,23 @@
 'use client'
 
 import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { usePathname } from 'next/navigation'
 import DropdownMenu from './DropdownMenu'
 import { signOut } from 'next-auth/react'
 import { IoMdFootball } from "react-icons/io";
-import { BiBell } from 'react-icons/bi'
 import useUser from '@/hooks/useUser'
-// 
 import { MdVerified } from "react-icons/md";
-// 
-import { MdOutlineEmail } from "react-icons/md";
-import { MdOutlinePersonOutline } from "react-icons/md";
-import { BsCalendarCheck } from "react-icons/bs";
-import { NavLinkProps, NotificationProps } from '@/types/types'
-import { PiDotsThreeBold } from "react-icons/pi";
-// theme
+import { NavLinkProps } from '@/types/types'
 import { WiMoonAltFirstQuarter } from "react-icons/wi";
 import { HiOutlineMoon } from "react-icons/hi2";
 import { WiDaySunny } from "react-icons/wi";
 import { BsArrowLeftShort } from "react-icons/bs";
 import ThemeHandler from './ThemeHandler'
 import ProfilePicture from './ProfilePicture'
+import useNotifications from '@/hooks/useNotifications'
+import NotificationList from './notification/NotificationList'
+import { BiBell } from 'react-icons/bi'
 
 const Navbar = () => {
   const links: NavLinkProps[] = [
@@ -48,27 +43,7 @@ const Navbar = () => {
 
         <div className='flex justify-center items-center gap-3'>
           {/* notifications menu */}
-          <DropdownMenu
-            trigger={<button className='w-10 h-10 flex justify-center items-center rounded-full'>
-              <BiBell />
-            </button>}
-          >
-            <div className='flex flex-col justify-start items-start gap-0.5 w-80 max-h-96 h-[70vh] overflow-auto'>
-              <div className="p-3 border-b border-neutral-700 w-full text-start sticky top-0 bg-white dark:bg-neutral-800 z-50">
-                <span className='font-bold text-xl'>Notificaciones</span>
-              </div>
-              {/* content */}
-              <div>
-                <NotificationCard _id={''} title={'Reserva hecha'} message={'Hola, Guido! La reserva se ha efectuado exitosamente!'} type={'account'} seen={false} />
-                <NotificationCard _id={''} title={'Reserva hecha'} message={'Hola, Guido! La reserva se ha efectuado exitosamente!'} type={'reservation'} seen={false} />
-                <NotificationCard _id={''} title={'Reserva hecha'} message={'Hola, Guido! La reserva se ha efectuado exitosamente!'} type={'email'} seen={true} />
-                <NotificationCard _id={''} title={'Reserva hecha'} message={'Hola, Guido! La reserva se ha efectuado exitosamente!'} seen={true} />
-                <NotificationCard _id={''} title={'Reserva hecha'} message={'Hola, Guido! La reserva se ha efectuado exitosamente!'} seen={true} />
-                <NotificationCard _id={''} title={'Reserva hecha'} message={'Hola, Guido! La reserva se ha efectuado exitosamente!'} type={'reservation'} seen={true} />
-                <NotificationCard _id={''} title={'Reserva hecha'} message={'Hola, Guido! La reserva se ha efectuado exitosamente!'} type={'reservation'} seen={true} />
-              </div>
-            </div>
-          </DropdownMenu>
+          <NotificationsMenu />
 
           {/* dropdown config menu */}
           <ProfileOptionsMenu />
@@ -80,6 +55,7 @@ const Navbar = () => {
 
 export default Navbar
 
+// Links
 const NavLink: React.FC<NavLinkProps> = ({ title, route }) => {
   const pathname = usePathname()
 
@@ -90,6 +66,30 @@ const NavLink: React.FC<NavLinkProps> = ({ title, route }) => {
   )
 }
 
+// NotificationsMenu dropdown
+const NotificationsMenu = () => {
+  const { notifications, isLoading, error, unreadNotifications } = useNotifications();
+
+  return (
+    <DropdownMenu trigger={
+      <button className="w-10 h-10 flex justify-center items-center rounded-full relative border">
+        <BiBell />
+        {unreadNotifications > 0 && (
+          <span className="text-sm font-bold w-5 h-5 bg-blue-500 text-white rounded-full z-50 absolute top-0 right-0">{unreadNotifications}</span>
+        )}
+      </button>
+    }>
+      <div className="w-96 max-h-[400px] overflow-auto">
+        {isLoading && <p>Cargando...</p>}
+        {error && <p>Error al cargar: {error.message}</p>}
+        {notifications && (
+          <NotificationList notifications={notifications} />
+        )}
+      </div>
+    </DropdownMenu>
+  );
+};
+
 const ProfileOptionsMenu = () => {
   const user = useUser()
 
@@ -97,7 +97,7 @@ const ProfileOptionsMenu = () => {
 
   return (
     <DropdownMenu
-      trigger={<button className='w-10 h-10 bg-black rounded-full overflow-hidden'>
+      trigger={<button className='w-10 h-10 border rounded-full overflow-hidden'>
         <ProfilePicture className='w-10 h-10 object-contain' />
       </button>}
     >
@@ -142,52 +142,6 @@ const ProfileOptionsMenu = () => {
     </DropdownMenu>
   )
 }
-
-const NotificationCard: React.FC<NotificationProps> = ({ _id, title, message, type, seen }) => {
-  const [isNew, setIsNew] = useState(!seen);
-  const [background, setBackground] = useState(isNew ? 'bg-blue-200 dark:bg-blue-100' : 'bg-transparent');
-
-  useEffect(() => {
-    if (isNew) {
-      setTimeout(() => {
-        setBackground('bg-transparent');
-      }, 500);
-    }
-  }, [isNew]);
-
-  return (
-    <div className={`relative block select-none transition-all duration-1000 ${background} dark:bg-neutral-800`}>
-      <div className='w-full flex justify-center items-start gap-3 p-3 border-b border-neutral-700 hover:bg-gray-50 dark:hover:bg-neutral-700'>
-        {/* icon */}
-        <div className='w-7 h-7 flex justify-center items-center shrink-0'>
-          {type === 'email' ? (
-            <MdOutlineEmail className='w-full h-full object-contain' />
-          ) : type === 'reservation' ? (
-            <BsCalendarCheck className='w-full h-full object-contain' />
-          ) : type === 'account' ? (
-            <MdOutlinePersonOutline className='w-full h-full object-contain' />
-          ) : (
-            <BiBell className='w-full h-full object-contain' />
-          )}
-        </div>
-        {/* content */}
-        <div className="flex flex-col justify-start items-start">
-          <span className='font-bold text-lg'>{title}</span>
-          <span>{message}</span>
-        </div>
-      </div>
-      {/* Dropdown options */}
-      <div className="absolute top-2 right-2">
-        <DropdownMenu trigger={<PiDotsThreeBold className='cursor-pointer' size={23} />}>
-          <ul className='py-1'>
-            <li className='p-2 itemStyle'>Ocultar notificación</li>
-            <li className='p-2 itemStyle'>Reportar abuso</li>
-          </ul>
-        </DropdownMenu>
-      </div>
-    </div>
-  );
-};
 
 const ChangeThemeMenu = () => {
   return (

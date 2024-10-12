@@ -44,8 +44,8 @@ export type NotificationProps = {
   title: string;
   message: string;
   seen: boolean; // false by default
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt: string;
+  updatedAt?: string;
 }
 
 // navbar

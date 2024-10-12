@@ -6,7 +6,9 @@ import { MdHome, MdOutlineHome, MdEmail, MdOutlineEmail, MdChecklistRtl, MdOutli
 import { BsPlusCircle, BsPlusCircleFill } from "react-icons/bs";
 import { usePathname } from 'next/navigation';
 import { IoIosList, IoIosListBox } from "react-icons/io";
+import { BiBell, BiSolidBell } from 'react-icons/bi'
 import Link from 'next/link';
+import useNotifications from '@/hooks/useNotifications';
 
 type NavbarBottomLinkProps = {
   icon: React.ReactNode;
@@ -21,7 +23,7 @@ const NavbarBottom = () => {
     { icon: <MdOutlineHome />, activeIcon: <MdHome />, route: "/" },
     { icon: <IoIosList />, activeIcon: <IoIosListBox />, route: "/reservations" },
     { icon: <BsPlusCircle />, activeIcon: <BsPlusCircleFill />, route: "/new" },
-    { icon: <MdOutlinePrivacyTip />, activeIcon: <MdPrivacyTip />, route: "/privacy-policy" },
+    { icon: <BiBell />, activeIcon: <BiSolidBell />, route: "/notifications" },
     { icon: <MdPersonOutline />, activeIcon: <MdPerson />, route: "/settings" },
   ]
 
@@ -50,6 +52,7 @@ const NavbarBottom = () => {
     };
   }, [lastScrollY]);
 
+  const { notifications, isLoading, error, unreadNotifications } = useNotifications();
 
   return (
     <nav className={`
@@ -59,9 +62,23 @@ const NavbarBottom = () => {
       <ul className={`flex justify-around items-center gap-3 text-[26px] h-full`}>
         {user.role == 'admin' && <NavbarBottomLink icon={<MdOutlineEmail />} activeIcon={<MdEmail />} route={"/send-email"} />}
 
-        {links.map((el, i) => (
-          <NavbarBottomLink key={i} {...el} />
-        ))}
+        {links.map((el, i) => {
+          if (el.route == "/notifications") {
+            // renderizar icono con sus notificaciones respectivas
+            return (
+              <div className='relative' key={i}>
+                {unreadNotifications > 0 && (
+                  <span className="text-[11px] flex justify-center items-center font-bold w-4 h-4 bg-blue-500 text-white rounded-full z-50 absolute -top-1 -right-1">{unreadNotifications}</span>
+                )}
+                <NavbarBottomLink {...el} />
+              </div>
+            )
+          } else {
+            return (
+              <NavbarBottomLink key={i} {...el} />
+            )
+          }
+        })}
       </ul>
     </nav>
   )

@@ -1,18 +1,21 @@
 "use client";
 
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { useSession } from 'next-auth/react'; // Importar useSession
+import { useState } from 'react';
+import { useSession } from 'next-auth/react';
 import ky from 'ky';
+import { useQueryClient } from 'react-query';
 
 function PaymentPage() {
   const searchParams = useSearchParams();
-  const { data: session } = useSession(); // Obtener la sesión
+  const { data: session } = useSession();
   const date = searchParams.get('date');
   const hour = searchParams.get('hour');
   const amount = searchParams.get('amount');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const queryClient = useQueryClient();
+
 
   const handleConfirmPayment = async () => {
     setIsLoading(true);
@@ -35,13 +38,14 @@ function PaymentPage() {
         },
       }).json();
 
-      // invalidar query ['userReservations', session?.user?.id]
-      
-      console.log("Reserva realizada:", response);
+      // si no usamos refetch en /new (al seleccionar una fecha), podemos invalidar la query
+      queryClient.invalidateQueries(['userReservations', session?.user?.id])
 
-      // manejar el pago
+      // Real-time update en notificaciones
+      queryClient.invalidateQueries(["notifications", session?.user?.id]);
+      
+      // -------------- manejar el pago --------------
       console.log("Procesando el pago...");
-  
     } catch (error: any) {
       if (error.response) {
         try {
@@ -59,8 +63,6 @@ function PaymentPage() {
     }
   };
   
-  
-
   if (!date || !hour || !amount) {
     return <p>No se han recibido todos los datos necesarios.</p>;
   }

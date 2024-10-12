@@ -3,6 +3,33 @@ import User from '@/models/User';
 import Notification from '@/models/Notification';
 import dbConnect from '@/lib/dbConnect';
 
+// /api/users/[id]/notifications/[notificationId]
+// 'id': id del usuario
+// 'reservationId': id de la reserva
+
+// Actualizar una notificación específica de un usuario (se usará generalmente para establecer si fue vista o no (seen))
+export async function PUT(req: Request, { params }: { params: { id: string, notificationId: string } }) {
+  try {
+    await dbConnect();
+
+    const { notificationId } = params;
+
+    // Buscar la notificación por su ID
+    const notification = await Notification.findById(notificationId);
+    if (!notification) {
+      return NextResponse.json({ message: 'Notificación no encontrada' }, { status: 404 });
+    }
+
+    // Actualizar el estado de 'seen' a true
+    notification.seen = true;
+    await notification.save();
+
+    return NextResponse.json({ message: 'Notificación actualizada correctamente', notification }, { status: 200 });
+  } catch (error) {
+    return NextResponse.json({ message: 'Error al actualizar la notificación', error }, { status: 500 });
+  }
+}
+
 // Eliminar una notificación específica del usuario
 export async function DELETE(req: Request, { params }: { params: { id: string, notificationId: string } }) {
   try {

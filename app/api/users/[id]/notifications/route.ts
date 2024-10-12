@@ -3,7 +3,7 @@ import User from '@/models/User';
 import dbConnect from '@/lib/dbConnect';
 import Notification from '@/models/Notification';
 
-// Obtener todas las notificaciones del array 'notifications' del usuario
+// Obtener todas las notificaciones del array 'notifications' del usuario ordenadas por fecha
 export async function GET(req: Request, { params }: { params: { id: string } }) {
   try {
     await dbConnect();
@@ -14,7 +14,9 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
       return NextResponse.json({ message: 'Usuario no encontrado' }, { status: 404 });
     }
 
-    const notifications = await Notification.find({ _id: { $in: user.notifications } });
+    // Obtener las notificaciones del usuario y ordenarlas por fecha de creación (más recientes primero)
+    const notifications = await Notification.find({ _id: { $in: user.notifications } })
+      .sort({ createdAt: -1 });
 
     return NextResponse.json(notifications, { status: 200 });
   } catch (error) {
