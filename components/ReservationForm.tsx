@@ -31,7 +31,7 @@ function ReservationForm() {
   };
 
   // Hook de React Query que se ejecuta cuando `selectedDate` cambia
-  const { data: reservation, error, isLoading, refetch } = useQuery<Reservation>(
+  const { data: reservation, error, isLoading, refetch } = useQuery<Reservation, Error>(
     ['reservation', selectedDate],
     () => fetchReservation(selectedDate?.toISOString().split('T')[0] || ""),
     {
@@ -68,8 +68,7 @@ function ReservationForm() {
     <div className="reservation-form p-6 mx-auto w-full max-w-screen-md">
       <span className='text-3xl font-medium text-center block my-3'>Realizar una reserva</span>
 
-      <div className="flex flex-col gap-2 justify-start items-start mb-3">
-        <label htmlFor="date" className="text-gray-700 dark:text-white text-lg">Selecciona una fecha:</label>
+      <div className="flex flex-col gap-2 justify-start items-start my-5">
         <Calendar
           selected={selectedDate}
           onDateChange={handleDateChange}
@@ -81,25 +80,42 @@ function ReservationForm() {
         />
       </div>
 
+      {/* Horarios de la reserva */}
       <div className="flex flex-col gap-2 justify-start items-start mb-3">
-        <label htmlFor="hour" className="text-gray-700 dark:text-white text-lg">Selecciona una hora:</label>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-3 gap-2 w-full">
+          {/* renderizar horarios */}
           {reservation && reservation.schedule.map((schedule: Schedule) => (
             <button
               key={schedule.hour}
-              className={`w-full h-12 rounded-lg ${schedule.occupied ? 'bg-red-500 text-white' : 'bg-gray-200 hover:bg-gray-300'} ${selectedHour === schedule.hour ? 'border-2 border-blue-500' : ''}`}
+              className={`
+                w-full h-12 rounded-lg 
+                ${schedule.occupied
+                  ? 'bg-red-500 text-white cursor-not-allowed opacity-60'
+                  : 'bg-gray-200 md:hover:bg-gray-300 dark:bg-neutral-800 md:dark:hover:bg-neutral-700 active:brightness-90 duration-75'} 
+                ${selectedHour === schedule.hour ? 'border-2 border-blue-500' : ''}
+              `}
               onClick={() => handleHourClick(schedule.hour, schedule.occupied)}
               disabled={schedule.occupied}
             >
               {schedule.hour}
             </button>
           ))}
+          {/* estado de carga */}
+          {isLoading && <>
+            {Array.from({ length: 11 }).map((_, i) => (
+              <span key={i} className='w-full h-12 rounded-lg dark:bg-neutral-600 bg-gray-300 animate-pulse'></span>
+            ))}
+          </>}
         </div>
       </div>
 
-      <div className="flex flex-col gap-2 justify-start items-start mb-3">
-        <span className="text-lg">Monto total a pagar: ${totalAmount}</span>
-      </div>
+      {/* mensaje de error */}
+      {error && <span className='text-red-700'>{error.message}</span>}
+
+      {selectedDate && selectedHour && <div className='my-3'>
+        <span className='text-lg dark:text-neutral-400 text-gray-600 mb-3 block'>Estás reservando 1 hora de Fútbol 5 para el {selectedDate instanceof Date ? selectedDate.toLocaleDateString('es-AR', { weekday: 'long', month: 'long', day: 'numeric' }) : ''} a las {selectedHour}hs</span>
+        <span className='text-lg dark:text-neutral-400 text-gray-600 block'>Monto total a pagar: ${totalAmount}</span>
+      </div>}
 
       <button
         onClick={handlePayment}

@@ -104,8 +104,8 @@ const Calendar: React.FC<CalendarProps> = ({
 
   // Calendario
   return (
-    <div className="bg-white dark:bg-neutral-900 shadow-md rounded-lg p-4 mx-auto max-w-[400px] w-full">
-      <div className="flex justify-between mb-2">
+    <div className="bg-white dark:bg-neutral-800 shadow-md rounded-lg p-4 mx-auto max-w-[400px] w-full">
+      <div className="flex justify-between items-center mb-2">
         <button className='w-10 h-10 rounded-full flex justify-center items-center text-xl dark:hover:bg-neutral-700 hover:bg-gray-300' onClick={() => changeMonth(-1)}>
           <MdKeyboardArrowLeft />
         </button>
