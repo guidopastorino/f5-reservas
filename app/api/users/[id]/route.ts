@@ -20,8 +20,9 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     const { id } = params;
 
     let user = null;
+
+    // Comprobación si el ID es un ObjectId de MongoDB
     if (id.match(/^[0-9a-fA-F]{24}$/)) {
-      // Si el id tiene el formato de un ObjectId, buscar por _id
       user = await User.findById(id).lean<IUser>();
     }
 

@@ -131,7 +131,7 @@ const NotificationContent: React.FC<{ notification: NotificationProps; isSeen: b
         <div className="flex flex-col justify-start items-start w-[80%]">
           <span className='text-md'>{getTimeAgo(notification.createdAt)}</span>
           <span className='font-bold text-lg'>{notification.title}</span>
-          <span className='w-full break-all'>{notification.message}</span>
+          <span className='w-full break-words'>{notification.message}</span>
         </div>
       </div>
       {/* DropdownMenu options */}

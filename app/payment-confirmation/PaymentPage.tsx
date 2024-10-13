@@ -1,11 +1,10 @@
 "use client";
 
 import { useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import ky from 'ky';
 import { useQueryClient } from 'react-query';
-import ConfettiExplosion from 'react-confetti-explosion';
 
 function PaymentPage() {
   const searchParams = useSearchParams();
@@ -16,10 +15,6 @@ function PaymentPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const queryClient = useQueryClient();
-
-  // State to manage when confettis are triggered
-  const [isExploding, setIsExploding] = useState<boolean>(false);
-
 
   const handleConfirmPayment = async () => {
     setIsLoading(true);
@@ -42,17 +37,11 @@ function PaymentPage() {
         },
       }).json();
 
-      // si no usamos refetch en /new (al seleccionar una fecha), podemos invalidar la query
-      queryClient.invalidateQueries(['userReservations', session?.user?.id])
+      console.log(response)
 
-      // Real-time update en notificaciones
+      // Invalidar queries para actualizar datos en tiempo real
+      queryClient.invalidateQueries(['userReservations', session?.user?.id]);
       queryClient.invalidateQueries(["notifications", session?.user?.id]);
-
-      // Trigger confettis
-      setIsExploding(true)
-
-      // -------------- manejar el pago --------------
-      console.log("Procesando el pago...");
 
     } catch (error: any) {
       if (error.response) {
@@ -91,9 +80,6 @@ function PaymentPage() {
       >
         {isLoading ? 'Procesando...' : 'Confirmar y Pagar'}
       </button>
-
-      {/* confettis */}
-      {isExploding && <ConfettiExplosion force={0.8} duration={2000} particleCount={250} width={1600} />}
     </div>
   );
 }
