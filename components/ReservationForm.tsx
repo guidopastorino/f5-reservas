@@ -65,9 +65,11 @@ function ReservationForm() {
   };
 
   return (
-    <div className="reservation-form p-6">
-      <div className="form-group mb-4">
-        <label htmlFor="date" className="text-gray-700 dark:text-white">Selecciona una fecha:</label>
+    <div className="reservation-form p-6 mx-auto w-full max-w-screen-md">
+      <span className='text-3xl font-medium text-center block my-3'>Realizar una reserva</span>
+
+      <div className="flex flex-col gap-2 justify-start items-start mb-3">
+        <label htmlFor="date" className="text-gray-700 dark:text-white text-lg">Selecciona una fecha:</label>
         <DatePicker
           selected={selectedDate}
           onChange={handleDateChange}
@@ -80,8 +82,8 @@ function ReservationForm() {
         />
       </div>
 
-      <div className="form-group mb-4">
-        <label htmlFor="hour" className="text-gray-700 dark:text-white">Selecciona una hora:</label>
+      <div className="flex flex-col gap-2 justify-start items-start mb-3">
+        <label htmlFor="hour" className="text-gray-700 dark:text-white text-lg">Selecciona una hora:</label>
 
         {isLoading ? (
           <div className='w-full p-4 flex justify-center items-center'>
@@ -89,7 +91,7 @@ function ReservationForm() {
           </div>
         ) : error ? (
           <p className="text-red-500">
-            {error instanceof Error ? error.message : "No se han encontrado datos de reserva para esta fecha"}
+            {error instanceof Error ? error.message : "No se han encontrado horarios de reserva para esta fecha"}
           </p>
         ) : reservation && reservation.schedule ? (
           <div className="hours-grid grid grid-cols-4 gap-2 mt-4">
@@ -122,7 +124,7 @@ function ReservationForm() {
       <button
         disabled={!selectedDate || !selectedHour}
         onClick={handlePayment}
-        className={`mt-6 w-full py-3 px-4 rounded-lg font-semibold text-white transition-all ${(!selectedDate || !selectedHour) ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+        className={`mt-6 w-full py-3 px-4 rounded-lg font-semibold text-white transition-all text-elipsis ${(!selectedDate || !selectedHour) ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
           }`}
       >
         Confirmar y Pagar

@@ -32,7 +32,7 @@ const Navbar = () => {
   return (
     <header className='hidden md:block shadow-md bg-white dark:bg-neutral-900 dark:text-white sticky top-0 left-0 right-0 w-full h-14 z-50 px-5'>
       <div className='w-full h-full max-w-screen-2xl mx-auto flex justify-between items-center'>
-        <Link href={"/"}><IoMdFootball size={50} className='text-black dark:text-neutral-500' /></Link>
+        <Link href={"/"}><img className='h-12 object-contain shrink-0' src='/icons/ms-icon-310x310.png' alt='Logo' /></Link>
 
         <ul className='flex justify-center items-center gap-3'>
           {user.role == 'admin' && <NavLink title='Enviar emails' route='/send-email' />}

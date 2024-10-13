@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import ky from 'ky';
 import { useQueryClient } from 'react-query';
+import ConfettiExplosion from 'react-confetti-explosion';
 
 function PaymentPage() {
   const searchParams = useSearchParams();
@@ -16,24 +17,27 @@ function PaymentPage() {
   const [errorMessage, setErrorMessage] = useState('');
   const queryClient = useQueryClient();
 
+  // State to manage when confettis are triggered
+  const [isExploding, setIsExploding] = useState<boolean>(false);
+
 
   const handleConfirmPayment = async () => {
     setIsLoading(true);
     setErrorMessage('');
-  
+
     if (!session || !session.user || !session.user.id) {
       setErrorMessage("No se ha encontrado la sesión del usuario.");
       setIsLoading(false);
       return;
     }
-  
+
     const validDate = date || "";
     const formattedDate = new Date(validDate).toISOString().split('T')[0];
-  
+
     try {
       const response = await ky.put(`/api/reservations/${formattedDate}`, {
-        json: { 
-          hour, 
+        json: {
+          hour,
           userId: session.user.id
         },
       }).json();
@@ -43,9 +47,13 @@ function PaymentPage() {
 
       // Real-time update en notificaciones
       queryClient.invalidateQueries(["notifications", session?.user?.id]);
-      
+
+      // Trigger confettis
+      setIsExploding(true)
+
       // -------------- manejar el pago --------------
       console.log("Procesando el pago...");
+
     } catch (error: any) {
       if (error.response) {
         try {
@@ -62,7 +70,7 @@ function PaymentPage() {
       setIsLoading(false);
     }
   };
-  
+
   if (!date || !hour || !amount) {
     return <p>No se han recibido todos los datos necesarios.</p>;
   }
@@ -76,13 +84,16 @@ function PaymentPage() {
 
       {errorMessage && <p className="text-red-500">{errorMessage}</p>}
 
-      <button 
-        onClick={handleConfirmPayment} 
+      <button
+        onClick={handleConfirmPayment}
         className={`submit-button dark:bg-gray-700 dark:text-white ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
         disabled={isLoading}
       >
         {isLoading ? 'Procesando...' : 'Confirmar y Pagar'}
       </button>
+
+      {/* confettis */}
+      {isExploding && <ConfettiExplosion force={0.8} duration={2000} particleCount={250} width={1600} />}
     </div>
   );
 }
