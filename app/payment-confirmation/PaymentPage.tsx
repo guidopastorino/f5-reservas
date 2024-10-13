@@ -76,8 +76,8 @@ function PaymentPage() {
   }
 
   return (
-    <div className="payment-page">
-      <h1 className="dark:text-white">Confirmar Pago</h1>
+    <div className="w-full mx-auto max-w-screen-lg flex flex-col justify-start items-center gap-3">
+      <span className='text-3xl font-medium text-center block my-3'>Confirmar Pago</span>
       <p className="dark:text-white">Fecha: {date}</p>
       <p className="dark:text-white">Hora: {hour}</p>
       <p className="dark:text-white">Total a pagar: ${amount}</p>
@@ -86,7 +86,7 @@ function PaymentPage() {
 
       <button
         onClick={handleConfirmPayment}
-        className={`submit-button dark:bg-gray-700 dark:text-white ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+        className={`w-full max-w-40 p-3 text-center font-medium bg-black dark:bg-neutral-700 dark:text-white rounded-sm ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
         disabled={isLoading}
       >
         {isLoading ? 'Procesando...' : 'Confirmar y Pagar'}
