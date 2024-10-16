@@ -5,6 +5,7 @@ import App from "./_app";
 import Navbar from "@/components/Navbar";
 import NavbarBottom from "@/components/NavbarBottom";
 import { usePathname } from 'next/navigation';
+import Footer from "@/components/Footer";
 
 const UseApp = ({
   children,

@@ -130,3 +130,13 @@ button>* {
     transform: rotate(1turn)
   }
 }
+
+/* slider */
+.contentSlider::-webkit-scrollbar {
+  display: none; /* Oculta el scrollbar en navegadores basados en WebKit */
+}
+
+.contentSlider {
+  -ms-overflow-style: none; /* Para Internet Explorer y Edge */
+  scrollbar-width: none; /* Para Firefox */
+}

@@ -54,3 +54,16 @@ export type NavLinkProps = {
   title: string;
   route: string;
 }
+
+
+// review
+// Definir el tipo para una Review
+export interface ReviewProps {
+  _id: string;
+  fullname: string;
+  username: string;
+  review: string;       
+  stars: number;      
+  createdAt: Date;
+  updatedAt?: Date;   
+}

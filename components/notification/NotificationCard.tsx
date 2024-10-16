@@ -114,7 +114,7 @@ const NotificationContent: React.FC<{ notification: NotificationProps; isSeen: b
 
   return (
     <div className={`relative block transition-all duration-1000 ${isSeen ? '' : 'bg-blue-200 dark:bg-blue-950'} w-full`}>
-      <div className='w-full flex justify-center items-start gap-3 p-3 border-b dark:border-neutral-700 hover:bg-gray-50 dark:hover:bg-neutral-700'>
+      <div className='w-full flex justify-center items-start gap-3 p-3 border-b dark:border-neutral-700 md:hover:bg-gray-50 md:dark:hover:bg-neutral-700'>
         {/* Icon */}
         <div className='w-7 h-7 flex justify-center items-center shrink-0'>
           {notification.type === 'email' ? (

@@ -32,7 +32,7 @@ const NotificationsPageComponent = () => {
   }, {});
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full p-3">
       {isLoading && <p>Cargando...</p>}
       {error && <p>Error: {error.message}</p>}
       {groupedNotifications && (
