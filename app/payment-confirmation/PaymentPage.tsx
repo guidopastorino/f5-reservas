@@ -49,7 +49,7 @@ function PaymentPage() {
           const errorData = await error.response.json();
           setErrorMessage(errorData.message || "Error desconocido.");
         } catch (jsonError) {
-          setErrorMessage("Error desconocido.");
+          setErrorMessage(error.response.statusText || "Error desconocido.");
         }
       } else {
         setErrorMessage(error.message || "Hubo un error al confirmar el pago.");
@@ -75,7 +75,7 @@ function PaymentPage() {
 
       <button
         onClick={handleConfirmPayment}
-        className={`w-full max-w-40 p-3 text-center font-medium bg-black dark:bg-neutral-700 dark:text-white rounded-sm ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+        className={`w-full max-w-40 p-3 text-center font-medium text-white bg-neutral-700 rounded-sm ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
         disabled={isLoading}
       >
         {isLoading ? 'Procesando...' : 'Confirmar y Pagar'}

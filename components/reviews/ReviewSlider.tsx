@@ -87,7 +87,7 @@ const ReviewSlider = () => {
     <>
       <div className='w-full flex justify-start items-center gap-3 overflow-hidden'>
         {Array.from({ length: 10 }).map((_, i) => (
-          <span key={i} className='shrink-0 w-60 h-72 bg-gray-300 rounded-lg animate-pulse'></span>
+          <span key={i} className='shrink-0 aspect-video w-32 bg-gray-300 rounded-lg animate-pulse'></span>
         ))}
       </div>
     </>

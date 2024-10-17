@@ -8,6 +8,8 @@ import * as Yup from 'yup';
 import useUser from '@/hooks/useUser';
 import { useShowMessage } from '@/hooks/useShowMessage';
 import ky, { HTTPError } from 'ky';
+import { useQueryClient } from 'react-query';
+import { ReviewProps } from '@/types/types';
 
 interface ErrorMessage {
   message: string;
@@ -16,6 +18,7 @@ interface ErrorMessage {
 const CreateReviewButton = () => {
   const user = useUser();
   const { message, visible, showMessage } = useShowMessage();
+  const queryClient = useQueryClient();
 
   const formik = useFormik({
     initialValues: {
@@ -32,25 +35,53 @@ const CreateReviewButton = () => {
         .max(5, 'Las estrellas no pueden ser más de 5'),
     }),
     onSubmit: async (values) => {
-      try {
-        const newReview = {
-          fullname: user.fullname || '',
-          username: user.username || '',
-          review: values.review,
-          stars: Number(values.stars),
-        };
+      const existingReviews = queryClient.getQueryData<ReviewProps[]>('reviews');
 
+      // Verificar si el usuario ya tiene una reseña
+      const userAlreadyReviewed = existingReviews?.some(
+        (review) => review.username === user.username
+      );
+
+      if (userAlreadyReviewed) {
+        // Mostrar mensaje de error y no permitir la creación
+        showMessage('Ya tienes una reseña creada.');
+        return;
+      }
+
+      // Creación optimista de la review
+      const newReview: ReviewProps = {
+        _id: Math.random().toString(36).substring(7), // Genera un id temporal
+        fullname: user.fullname || '',
+        username: user.username || '',
+        review: values.review,
+        stars: Number(values.stars),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      // Guardar el estado previo por si necesitamos revertirlo
+      const previousReviews = queryClient.getQueryData<ReviewProps[]>('reviews');
+
+      // Actualizar la caché local de manera optimista
+      queryClient.setQueryData('reviews', (oldReviews: ReviewProps[] | undefined) => 
+        oldReviews ? [...oldReviews, newReview] : [newReview]
+      );
+
+      try {
+        // Intentar enviar la reseña al servidor
         await ky.post("/api/reviews", { json: newReview }).json();
 
+        // Si es exitoso, restablecer el formulario
         formik.resetForm();
       } catch (error) {
-        // Verificamos si error tiene la propiedad response
-        if (isKyError(error) && error.response) {
-          const errorMessage = await error.response.json(); // Capturamos el mensaje de error
+        // Si hay un error, revertir el cambio optimista
+        queryClient.setQueryData('reviews', previousReviews);
 
-          // Comprobamos que errorMessage tenga la propiedad message
+        // Manejar el error
+        if (isKyError(error) && error.response) {
+          const errorMessage = await error.response.json(); // Capturar el mensaje de error
           if (isErrorMessage(errorMessage)) {
-            showMessage(errorMessage.message); // Mostramos el mensaje que vino del servidor
+            showMessage(errorMessage.message); // Mostrar el mensaje del servidor
           } else {
             showMessage("Error desconocido del servidor.");
           }

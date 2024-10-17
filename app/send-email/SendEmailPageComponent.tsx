@@ -12,7 +12,6 @@ type UserRole = 'admin' | 'user';
 
 const validationSchema = Yup.object().shape({
   from: Yup.string().email("Correo electrónico no válido").required("El campo 'De' es obligatorio"),
-  // destinarios: Yup.string().required("El campo 'Destinario/s' es obligatorio").email("El email no es válido"),
   asunto: Yup.string().required("El campo 'Asunto' es obligatorio"),
   contenido: Yup.string().required("El campo 'Contenido' es obligatorio"),
 });
@@ -28,15 +27,6 @@ const SendEmailPageComponent = () => {
 
   const { message, visible, showMessage } = useShowMessage();
   const [loading, setLoading] = useState<boolean>(false);
-
-  if (!isAdmin(currentRole)) {
-    return (
-      <div>
-        <p>Oops... parece que eres un usuario intentando enviar correos..</p>
-        <div><Link href={"/"}>Volver al inicio</Link></div>
-      </div>
-    );
-  }
 
   const formik = useFormik({
     initialValues: {
@@ -62,8 +52,17 @@ const SendEmailPageComponent = () => {
     },
   });
 
+  if (!isAdmin(currentRole)) {
+    return (
+      <div>
+        <p>Oops... parece que eres un usuario intentando enviar correos..</p>
+        <div><Link href={"/"}>Volver al inicio</Link></div>
+      </div>
+    );
+  }
+
   return (
-    <div className='flex flex-col gap-3 justify-center items-center'>
+    <div className='flex flex-col gap-3 justify-center items-center p-3'>
       <span className='font-bold text-3xl'>Enviar Email</span>
       <p>Envía email a algún usuario en específico o a todos!</p>
 
