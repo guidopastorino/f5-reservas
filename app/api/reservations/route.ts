@@ -65,37 +65,37 @@ export async function POST(req: Request) {
 
 // Actualizar una reserva
 // @params: id de la reserva, y un nuevo estado u ocupación para las horas
-// export async function PUT(req: Request) {
-//   const { id, hour, status, reservedBy } = await req.json();
+export async function PUT(req: Request) {
+  const { id, hour, status, reservedBy } = await req.json();
 
-//   try {
-//     await dbConnect();
+  try {
+    await dbConnect();
 
-//     // Buscar la reserva por ID y actualizar el horario específico
-//     const reservation = await Reservation.findById(id);
+    // Buscar la reserva por ID y actualizar el horario específico
+    const reservation = await Reservation.findById(id);
 
-//     if (!reservation) {
-//       return NextResponse.json({ message: "Reserva no encontrada" }, { status: 404 });
-//     }
+    if (!reservation) {
+      return NextResponse.json({ message: "Reserva no encontrada" }, { status: 404 });
+    }
 
-//     // Buscar la hora especificada y actualizarla
-//     const match = reservation.schedule.find((m: any) => m.hour === hour);
+    // Buscar la hora especificada y actualizarla
+    const match = reservation.schedule.find((m: any) => m.hour === hour);
 
-//     if (!match) {
-//       return NextResponse.json({ message: "Horario no encontrado" }, { status: 404 });
-//     }
+    if (!match) {
+      return NextResponse.json({ message: "Horario no encontrado" }, { status: 404 });
+    }
 
-//     // Actualizar el estado y quién reservó, si es necesario
-//     if (status) match.status = status;
-//     if (reservedBy) match.reservedBy = reservedBy;
+    // Actualizar el estado y quién reservó, si es necesario
+    if (status) match.status = status;
+    if (reservedBy) match.reservedBy = reservedBy;
 
-//     await reservation.save();
-//     return NextResponse.json({ message: "Reserva actualizada exitosamente" });
-//   } catch (error) {
-//     console.error("Error al actualizar la reserva:", error);
-//     return NextResponse.json({ message: "Error al actualizar la reserva" }, { status: 500 });
-//   }
-// }
+    await reservation.save();
+    return NextResponse.json({ message: "Reserva actualizada exitosamente" });
+  } catch (error) {
+    console.error("Error al actualizar la reserva:", error);
+    return NextResponse.json({ message: "Error al actualizar la reserva" }, { status: 500 });
+  }
+}
 
 // Eliminar todas las reservas
 export async function DELETE(req: Request) {
