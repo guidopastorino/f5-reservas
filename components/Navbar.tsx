@@ -4,8 +4,7 @@ import Link from 'next/link'
 import React, { useState } from 'react'
 import { usePathname } from 'next/navigation'
 import DropdownMenu from './DropdownMenu'
-import { signOut, useSession } from 'next-auth/react'
-import { IoMdFootball } from "react-icons/io";
+import { signOut } from 'next-auth/react'
 import useUser from '@/hooks/useUser'
 import { MdVerified } from "react-icons/md";
 import { NavLinkProps } from '@/types/types'
@@ -30,7 +29,7 @@ const Navbar = () => {
   const user = useUser()
 
   return (
-    <header className='hidden md:block shadow-md bg-white dark:bg-neutral-900 dark:text-white sticky top-0 left-0 right-0 w-full h-14 z-50 px-5'>
+    <header className='hidden md:block shadow-sm bg-white dark:bg-neutral-900 dark:text-white sticky top-0 left-0 right-0 w-full h-14 z-50 px-5'>
       <div className='w-full h-full max-w-screen-2xl mx-auto flex justify-between items-center'>
         <Link href={"/"}><img className='h-12 object-contain shrink-0' src='/icons/ms-icon-310x310.png' alt='Logo' /></Link>
 
