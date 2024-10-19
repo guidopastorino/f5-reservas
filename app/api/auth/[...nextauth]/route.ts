@@ -76,43 +76,43 @@ const handler = NextAuth({
     },
     // for google signin
     async signIn({ user, account, profile }) {
+      // { user, account, profile } proveen información acerca de la cuenta de Google autenticada y registrada
+      // El campo 'googleId' es un identificador único proporcionado por Google para cada usuario
+      // que se autentica usando Google. Esto nos permite identificar de manera confiable al
+      // usuario independientemente de cambios en su dirección de correo electrónico. 
+      // Al utilizar 'googleId', evitamos duplicación de cuentas y aseguramos que el usuario
+      // pueda iniciar sesión correctamente con Google en futuras ocasiones, incluso si cambian
+      // otros datos personales como su email.
+      // Los usuarios autenticados con Google NO usarán contraseña (ya que incluso no la provee el autenticador por seguridad)
       await dbConnect();
-    
-      let username = profile?.name?.toLowerCase().replace(/\s+/g, '') || `user${Date.now().toString().slice(-8)}`;
-    
-      try {
-        const existingUser = await User.findOne({ email: profile?.email });
-    
-        if (account?.provider === "google") {
-          if (existingUser) {
-            // Si el usuario ya existe y no tiene googleId
-            if (!existingUser.googleId) {
-              existingUser.googleId = profile?.sub; // Asociar la cuenta de Google al usuario existente
-              await existingUser.save();
-            }
-            // Devolver true ya que el usuario ya está asociado a Google
-            return true;
-          } else {
-            // Si no existe el usuario, creamos uno nuevo
-            const newUser = new User({
-              fullname: profile?.name,
-              email: profile?.email,
-              googleId: profile?.sub,
-              username,
-              role: 'user',
-              color: generateRandomColor(),
-            });
-            await newUser.save();
-            return true; // Usuario creado exitosamente
-          }
-        }
-      } catch (error) {
-        console.error("Error al iniciar sesión:", error);
-        return false; // Retornar false en caso de error
+      // Función auxiliar para generar el username
+      let username;
+      if (profile?.name) {
+        // Convertir a minúsculas y remover espacios
+        username = profile?.name.toLowerCase().replace(/\s+/g, '');
+      } else {
+        // Generar un username aleatorio basado en el timestamp actual si no hay nombre
+        const timestamp = Date.now().toString(); // Usar el timestamp actual
+        username = `user${timestamp.slice(-8)}`; // Tomar los últimos 8 dígitos del timestamp
       }
-    
-      return false; // Retornar false si el proveedor no es Google
-    }
+      // Si es un inicio de sesión con Google
+      if (account?.provider === "google") {
+        const existingUser = await User.findOne({ email: profile?.email });
+        if (!existingUser) {
+          // Si no existe el usuario, lo creamos
+          const newUser = new User({
+            fullname: profile?.name,
+            email: profile?.email,
+            googleId: profile?.sub,
+            username,
+            role: 'user',
+            color: generateRandomColor()
+          });
+          await newUser.save();
+        }
+      }
+      return true;
+    },
   }
 });
 

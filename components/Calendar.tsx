@@ -51,6 +51,7 @@ const Calendar: React.FC<CalendarProps> = ({
   const isDateDisabled = (date: Date) => {
     if (minDate && date < minDate) return true;
     if (maxDate && date > maxDate) return true;
+    if (date.getDay() == 0) return true; // Si es domingo
     if (disabledDates.some(d => d.getTime() === date.getTime())) return true;
     return false;
   };
@@ -68,7 +69,7 @@ const Calendar: React.FC<CalendarProps> = ({
       days.push(
         <div
           key={day}
-          className={`w-10 h-10 flex items-center justify-center cursor-pointer ${disabled ? 'dark:text-neutral-600 text-gray-400 cursor-auto' : (isSelected ? selectedClass : dayClass)}`}
+          className={`w-10 h-10 flex items-center justify-center cursor-pointer ${disabled ? 'dark:text-neutral-600 text-gray-400 cursor-default line-through' : (isSelected ? selectedClass : dayClass)}`}
           onClick={() => !disabled && handleDateClick(day)}
         >
           {day}
