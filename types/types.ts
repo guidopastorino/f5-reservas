@@ -13,23 +13,23 @@ export interface UserState {
 
 // 
 
-
 export type UserRole = 'admin' | 'user';
 
 export type ReservationStatus = 'available' | 'pending' | 'canceled' | 'confirmed'
 
 // Reserva que hará un usuario
-export interface Schedule {
+export interface ScheduleProps {
   hour: string;
   occupied: boolean;
   status: ReservationStatus;
   reservedBy: string; // user id 
+  _id?: string
 }
 
 export interface Reservation {
   _id: string;
   day: string;
-  schedule: Schedule[];
+  schedule: ScheduleProps[];
   createdAt: string;
   __v: number;
 }

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import dbConnect from "@/lib/dbConnect";
 import Reservation from "@/models/Reservation";
-import { Schedule } from "@/types/types";
+import { ScheduleProps } from "@/types/types";
 import User from "@/models/User";
 import { sendEmail } from "@/utils/emailService";
 import Notification from "@/models/Notification";
@@ -80,7 +80,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
       return NextResponse.json({ message: 'La hora ya ha expirado.' }, { status: 400 });
     }
 
-    const matchHour = reservation.schedule.find((slot: Schedule) => slot.hour === hour);
+    const matchHour = reservation.schedule.find((slot: ScheduleProps) => slot.hour === hour);
     if (!matchHour) {
       return NextResponse.json({ message: 'Horario no disponible.' }, { status: 404 });
     }
@@ -101,7 +101,12 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
       return NextResponse.json({ message: 'Usuario no encontrado.' }, { status: 404 });
     }
 
-    user.reservations.push({ day: params.id, hour });
+    // Agregar reservación hecha en el array 'reservations' del usuario
+    user.reservations.push({
+      reservationDay: reservation.day,
+      scheduleId: matchHour._id,
+      createdAt: Date.now() // Indica cuando el usuario realizó la reserva
+    });
 
     // Crear notificación
     const notification = new Notification({

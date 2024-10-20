@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import ky from 'ky';
 import { useQueryClient } from 'react-query';
+import toast from 'react-hot-toast';
 
 function PaymentPage() {
   const searchParams = useSearchParams();
@@ -43,16 +44,18 @@ function PaymentPage() {
       queryClient.invalidateQueries(['userReservations', session?.user?.id]);
       queryClient.invalidateQueries(["notifications", session?.user?.id]);
 
+      // Mostrar toast
+      toast.success("Pago realizado exitosamente", { className: "notificationStyle", duration: 3000 })
     } catch (error: any) {
       if (error.response) {
         try {
           const errorData = await error.response.json();
-          setErrorMessage(errorData.message || "Error desconocido.");
+          toast.error(errorData.message || "Error desconocido.", { className: "notificationStyle", duration: 3000 })
         } catch (jsonError) {
-          setErrorMessage(error.response.statusText || "Error desconocido.");
+          toast.error(error.response.statusText || "Error desconocido.", { className: "notificationStyle", duration: 3000 })
         }
       } else {
-        setErrorMessage(error.message || "Hubo un error al confirmar el pago.");
+        toast.error(error.message || "Hubo un error al confirmar el pago.", { className: "notificationStyle", duration: 3000 })
       }
       console.error("Error al confirmar el pago:", error);
     } finally {

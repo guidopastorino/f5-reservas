@@ -133,10 +133,18 @@ button>* {
 
 /* slider */
 .contentSlider::-webkit-scrollbar {
-  display: none; /* Oculta el scrollbar en navegadores basados en WebKit */
+  display: none;
+  /* Oculta el scrollbar en navegadores basados en WebKit */
 }
 
 .contentSlider {
-  -ms-overflow-style: none; /* Para Internet Explorer y Edge */
-  scrollbar-width: none; /* Para Firefox */
+  -ms-overflow-style: none;
+  /* Para Internet Explorer y Edge */
+  scrollbar-width: none;
+  /* Para Firefox */
+}
+
+/* notification */
+.notificationStyle {
+  @apply dark:bg-neutral-700 bg-white dark:text-white text-black
 }

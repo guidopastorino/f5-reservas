@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQuery } from 'react-query';
 import ky from 'ky';
-import { Reservation, Schedule } from '@/types/types';
+import { Reservation, ScheduleProps } from '@/types/types';
 import Calendar from './Calendar';
 
 function ReservationForm() {
@@ -84,7 +84,7 @@ function ReservationForm() {
       <div className="flex flex-col gap-2 justify-start items-start mb-3">
         <div className="grid grid-cols-3 gap-2 w-full">
           {/* renderizar horarios */}
-          {reservation && reservation.schedule.map((schedule: Schedule) => (
+          {reservation && reservation.schedule.map((schedule: ScheduleProps) => (
             <button
               key={schedule.hour}
               className={`

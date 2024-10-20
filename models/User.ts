@@ -12,13 +12,17 @@ const UserSchema = new mongoose.Schema({
     enum: ['admin', 'user'],
     default: 'user',
   },
-  reservations: [{
-    day: { type: String, required: true }, // Día de la reserva (YYYY-MM-DD)
-    hour: { type: String, required: true }, // Hora reservada
-    _id: false
-  }],
+  reservations: {
+    type: [{
+      reservationDay: { type: String, required: true }, // Día de la reserva (YYYY-MM-DD)
+      scheduleId: { type: String, required: true }, // Id del objeto de calendario del horario
+      createdAt: { type: Date },
+      _id: false
+    }],
+    default: [] // Valor predeterminado como array vacío
+  },
   notifications: [{
-    type: mongoose.Schema.Types.ObjectId, 
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'Notification', // Referencia al modelo 'Notification'
   }],
   googleId: { type: String },

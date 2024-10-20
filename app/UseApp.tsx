@@ -5,7 +5,7 @@ import App from "./_app";
 import Navbar from "@/components/Navbar";
 import NavbarBottom from "@/components/NavbarBottom";
 import { usePathname } from 'next/navigation';
-import Footer from "@/components/Footer";
+import { Toaster } from 'react-hot-toast';
 
 const UseApp = ({
   children,
@@ -27,6 +27,9 @@ const UseApp = ({
           {children}
         </div>
         {!shouldHideNavbar && <NavbarBottom />}
+
+        {/* Toast container */}
+        <Toaster />
       </>
     </App>
   )

@@ -1,3 +1,5 @@
+"use client"
+
 import ReviewSlider from '@/components/reviews/ReviewSlider';
 import SmoothDialog from '@/components/SmoothDialog';
 import Link from 'next/link';

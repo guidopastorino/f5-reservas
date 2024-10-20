@@ -1,63 +1,58 @@
 'use client'
 import ProfilePicture from '@/components/ProfilePicture';
 import { useShowMessage } from '@/hooks/useShowMessage';
-import useUser from '@/hooks/useUser'
+import useUser from '@/hooks/useUser';
 import ky from 'ky';
 import { signOut, useSession } from 'next-auth/react';
-import React, { useState } from 'react'
-
-type DeleteUserResponse = {
-  ok: boolean;
-  data?: {
-    message?: string;
-    error?: string;
-  };
-};
+import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 
 const SettingsPage = () => {
   const user = useUser();
+  const { data: session } = useSession();
+  const [loading, setLoading] = useState<boolean>(false);
 
   // Verifica que haya una fecha disponible y formatea la fecha
   const formatDate = (date: string) => {
-    const formattedDate = date
+    return date
       ? new Date(date).toLocaleDateString('es-ES', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      })
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        })
       : 'Fecha no disponible';
-
-    return formattedDate
-  }
-
-  // Función para eliminar el usuario
-  const { data: session } = useSession()
-
-  const { message, visible, showMessage } = useShowMessage()
-
-  const [loading, setLoading] = useState<boolean>(false)
-
-  const deleteUser = async () => {
-    try {
-      setLoading(true);
-
-      const res = await ky.delete(`/api/users/${session?.user.id || ''}`).json<DeleteUserResponse>();
-
-      if (res.ok) {
-        showMessage(res.data?.message || 'Usuario eliminado exitosamente');
-        setTimeout(() => {
-          signOut({ callbackUrl: '/' });
-        }, 1000);
-      } else {
-        showMessage(`Error eliminando usuario: ${res.data?.error || 'Error desconocido'}`);
-      }
-    } catch (error) {
-      showMessage(`Error eliminando usuario: ${error instanceof Error ? error.message : 'Error desconocido'}`);
-    } finally {
-      setLoading(false);
-    }
   };
 
+  // Función para eliminar el usuario
+  const deleteUser = async () => {
+    // Mostrar una promesa de notificación mientras se elimina el usuario
+    toast.promise(
+      ky.delete(`/api/users/${session?.user.id || ''}`).json<any>(), // Promesa para eliminar usuario
+      {
+        loading: 'Eliminando usuario...',
+        success: 'Usuario eliminado exitosamente',
+        error: 'Error eliminando el usuario',
+      }
+    ).then(() => {
+      setTimeout(() => {
+        signOut(); // Cierra sesión después de eliminar el usuario
+      }, 2000);
+    }).catch(error => {
+      console.error("Error eliminando el usuario:", error);
+    });
+  };
+
+  // Función para cerrar sesión con notificación
+  const handleSignOut = () => {
+    toast.promise(
+      signOut({ callbackUrl: '/' }), // Promesa para cerrar sesión
+      {
+        loading: 'Cerrando sesión...',
+        success: 'Sesión cerrada exitosamente',
+        error: 'Error cerrando sesión',
+      }
+    );
+  };
 
   return (
     <div className="w-full border max-w-screen-lg mx-auto p-4">
@@ -96,15 +91,13 @@ const SettingsPage = () => {
       </button>
 
       <button
-        onClick={() => signOut()}
+        onClick={handleSignOut}
         className="w-full max-w-max mx-auto font-medium my-5 rounded-full bg-neutral-900 text-white py-3 px-5 text-sm hover:bg-neutral-700 duration-100 flex justify-center items-center"
       >
         Cerrar sesión
       </button>
-
-      {visible && <span>{message}</span>}
     </div>
   );
-}
+};
 
 export default SettingsPage;
